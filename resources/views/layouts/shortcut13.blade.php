@@ -1,0 +1,1 @@
+{!! link_to('gmcp/create','购买') !!} | {!! link_to('cprk','入库') !!} | {!! link_to('cpdk','调库') !!} | {!! link_to('cpcs','出售') !!} || {!! link_to('gmcp','购买列表') !!} | {!! link_to('rkcp','入库列表') !!} | {!! link_to('dkcp','调库列表') !!} | {!! link_to('kccp','库存列表') !!} | {!! link_to('cscp','出售列表') !!} | {!! link_to('liren','利润列表') !!}

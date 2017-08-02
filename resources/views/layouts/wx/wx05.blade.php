@@ -1,0 +1,1 @@
+快捷方式：{!! link_to("wechatapigroup/0/edit","用户组列表") !!} | {!! link_to("wechatapigroup/delete","用户组详情") !!} | {!! link_to("wechatapigroup/create","创建用户组") !!}

@@ -1,0 +1,1 @@
+{!! link_to("dianpu","店铺列表") !!} | {!! link_to("user","账户列表") !!} | {!! link_to("yonggong","员工列表") !!} | {!! link_to("kecheng","课程列表") !!}

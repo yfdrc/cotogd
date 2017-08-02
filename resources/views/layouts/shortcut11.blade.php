@@ -1,0 +1,1 @@
+{!! link_to('jiazhang','家长列表') !!} | {!! link_to('xueyuan','学员列表') !!} | {!! link_to('xieyi','协议列表') !!} | {!! link_to('kouke','扣课列表') !!}

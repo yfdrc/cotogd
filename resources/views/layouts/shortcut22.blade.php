@@ -1,0 +1,1 @@
+快捷方式： {!! link_to("chanpinkh/create","推荐产品") !!} | {!! link_to("kccpkh","现货产品") !!} | {!! link_to("chanpinkh","全部产品") !!} | {!! link_to("contact","关于我们") !!}

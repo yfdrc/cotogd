@@ -1,0 +1,1 @@
+快捷方式：{!! link_to("wechatapicast/delete","群发文本") !!} | {!! link_to("wechatapicast/create","群发新闻") !!} | {!! link_to("wechatapicast/0/edit","群发文章") !!}

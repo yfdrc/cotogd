@@ -1,0 +1,1 @@
+快捷方式：{!! link_to("wechatapinotice/0/edit","发送模版01") !!} | {!! link_to("wechatapinotice/delete","发送模版02") !!} | {!! link_to("wechatapinotice/create","发送模版03") !!}

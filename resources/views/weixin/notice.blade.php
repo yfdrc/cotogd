@@ -1,0 +1,19 @@
+@extends('layouts.app')
+
+@section('shortcut')
+    @include('layouts.wx.wx03')
+@endsection
+
+@section('content')
+    @include('common.errors')
+
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            微信模版发送
+        </div>
+        <div class="panel-body">
+            {!! isset($ts) ? $ts : '' !!}
+        </div>
+    </div>
+
+@endsection

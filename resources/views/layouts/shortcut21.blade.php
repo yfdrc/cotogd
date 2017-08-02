@@ -1,0 +1,1 @@
+{!! link_to("tempyonggong","临时员工列表") !!} | {!! link_to("tempkecheng","临时课程列表") !!} | {!! link_to('tempjiazhang','临时家长列表') !!} | {!! link_to('tempxueyuan','临时学员列表') !!} | {!! link_to('tempxieyi','临时协议列表') !!} | {!! link_to('tempkouke','临时扣课列表') !!}

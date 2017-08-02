@@ -1,0 +1,1 @@
+快捷方式：{!! link_to("wechatapiqr/0/edit","创建临时二维码") !!} | {!! link_to("wechatapiqr/delete","创建卡券二维码") !!} | {!! link_to("wechatapiqr/create","创建永久二维码") !!}

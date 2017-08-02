@@ -1,0 +1,13 @@
+/.idea
+/install
+/node_modules
+/tests
+/vendor
+.env
+phpunit.xml
+*.log
+*.txt
+*.cmd
+*.sh
+/.gitattributes
+/composer.lock

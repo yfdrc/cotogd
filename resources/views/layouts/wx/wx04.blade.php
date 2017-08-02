@@ -1,0 +1,1 @@
+快捷方式：{!! link_to("wechatapiuser/0/edit","用户列表") !!} | {!! link_to("wechatapiuser/delete","用户详情") !!} | {!! link_to("wechatapiuser/create","发送模版03") !!}

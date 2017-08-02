@@ -1,0 +1,1 @@
+快捷方式：{!! link_to("wechatapimenu/0/edit","查看菜单") !!} | {!! link_to("wechatapimenu/create","新建菜单") !!} | {!! link_to("wechatapimenu/delete","删除菜单") !!}

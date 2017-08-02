@@ -1,0 +1,1 @@
+快捷方式：{!! link_to("wechatapitag/0/edit","用户标签列表") !!} | {!! link_to("wechatapitag/delete","删除用户标签") !!} | {!! link_to("wechatapitag/create","创建用户标签") !!}
