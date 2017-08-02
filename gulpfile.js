@@ -6,6 +6,10 @@ var header = require('gulp-header');
 var tap = require('gulp-tap');
 var nano = require('gulp-cssnano');
 var postcss = require('gulp-postcss');
+var sass = require('gulp-sass');
+var concat = require('gulp-concat');
+var cssmin = require('gulp-cssmin');
+var uglify = require('gulp-uglify');
 var autoprefixer = require('autoprefixer');
 var comments = require('postcss-discard-comments');
 var rename = require('gulp-rename');
@@ -31,6 +35,8 @@ var srcstyle =  'resources/assets/weui';
 var diststyle = 'public/weui';
 var srcexample =  'mobile/example';
 var distexample = 'resources/views/mobile/example';
+var srcapp =  'resources/assets';
+var distapp = 'public';
 
 gulp.task('build:style', function() {
     var banner = [
@@ -77,7 +83,16 @@ gulp.task('build:style', function() {
 
 gulp.task('build:example:assets', function() {
     gulp
-        .src(srcexample+'/**/*.?(png|jpg|gif|js)', { base: srcexample })
+        .src(srcexample+'/**/*.?(png|jpg|gif)', { base: srcexample })
+        .pipe(gulp.dest(diststyle))
+        .pipe(browserSync.reload({ stream: true }));
+
+    gulp
+        .src(srcexample+'/**/*.js', { base: srcexample })
+        .pipe(concat('example.js'))
+        .pipe(gulp.dest(diststyle))
+        .pipe(uglify())
+        .pipe(rename({suffix: '.min'}))
         .pipe(gulp.dest(diststyle))
         .pipe(browserSync.reload({ stream: true }));
 });
@@ -92,10 +107,17 @@ gulp.task('build:example:style', function() {
             })
         )
         .pipe(postcss([autoprefixer(['iOS >= 7', 'Android >= 4.1'])]))
+        .pipe(gulp.dest(diststyle))
+        .pipe(browserSync.reload({ stream: true }))
         .pipe(
             nano({
                 zindex: false,
                 autoprefixer: false
+            })
+        )
+        .pipe(
+            rename(function(path) {
+                path.basename += '.min';
             })
         )
         .pipe(gulp.dest(diststyle))
@@ -147,7 +169,23 @@ gulp.task('build:example', [
     'build:example:html'
 ]);
 
-gulp.task('release', ['build:style', 'build:example']);
+gulp.task('build:app', function() {
+    gulp
+        .src(srcapp+'/sass/*.scss')
+        .pipe(sass().on('error', sass.logError))
+        .pipe(concat('app.css'))
+        .pipe(cssmin())
+        .pipe(gulp.dest(distapp+'/css'))
+        .pipe(browserSync.reload({ stream: true }));
+
+    gulp
+        .src(srcapp+'/js/*.js')
+        .pipe(concat('app.js'))
+        .pipe(gulp.dest(distapp+'/js'))
+        .pipe(browserSync.reload({ stream: true }));
+});
+
+gulp.task('release', ['build:style', 'build:example', 'build:app']);
 
 // gulp.task('watch', ['release'], function() {
 //     gulp.watch('src/style/**/*', ['build:style']);

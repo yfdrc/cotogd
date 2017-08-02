@@ -1,6 +1,8 @@
 /.idea
 /install
 /node_modules
+/public
+/resources/views/mobile
 /tests
 /vendor
 .env
