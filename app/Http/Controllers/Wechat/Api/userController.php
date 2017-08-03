@@ -9,6 +9,7 @@
 namespace App\Http\Controllers\Wechat\Api;
 
 use App\Http\Controllers\Controller;
+use App\Model\Wxuser;
 use Carbon\Carbon;
 
 class userController extends Controller
@@ -23,12 +24,31 @@ class userController extends Controller
         try {
             $wechat = app('wechat');
             $userService = $wechat->user;
-            $users = $userService->lists();
+            $userlists = $userService->lists();
+            $userobj = json_decode($userlists);
+//            $total = $userobj->total;
+//            $count = $userobj->count;
+//            $nextopenid = $userobj->next_openid;
+            $openid = $userobj->data->openid;
+            $wxuser = array();
+            $userService = $wechat->user;
+            foreach ($openid as $item){
+                if( !Wxuser::find($item) ){
+                    $user = json_decode($userService->get($item));
+                    $wxuser['nickname'] = $user->nickname;
+                    $wxuser['remark'] = $user->remark;
+                    $wxuser['address'] = $user->province . $user->city;
+                    $wxuser['groupid'] = $user->groupid;
+                    $wxuser['subtime'] = $user->subscribe_time;
+                    $wxuser['openid'] = $item;
+                    Wxuser::create($wxuser);
+                }
+            }
         }catch (\Exception $ex)
         {
-            $users = "没有用户。";
+            $userlists = "错误：$ex";
         }
-        return view('weixin.user', ['ts' => '用户列表：' . $users . '  ' . Carbon::now()->toDateTimeString()]);
+        return view('weixin.user', ['ts' => '增加微信用户：' . $userlists]);
     }
 
 
@@ -38,8 +58,7 @@ class userController extends Controller
         $wechat = app('wechat');
         $userService = $wechat->user;
         $user = $userService->get($openId);
-        $userxq = "nickname:$user->nickname  openid: $user->openid  remark: $user->remark";
-        return view('weixin.user', ['ts' => '用户详情：' . $userxq . '  ' . Carbon::now()->toDateTimeString()]);
+        return view('weixin.user', ['ts' => '微信用户列表：' . $user . '  ' . Carbon::now()->toDateTimeString()]);
     }
 
     public function create()
