@@ -82,7 +82,7 @@ class userController extends Controller
     public function update(Request $request, $id)
     {
         $model = Wxuser::findOrFail($id);
-        $this->validate($request, [ 'openid' => 'required']);
+        $this->validate($request, [ 'remark' => 'required']);
         $input = $request->all();
         $model->fill($input)->save();
         return redirect(url('wechatapiuser'));
