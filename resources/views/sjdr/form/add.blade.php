@@ -15,6 +15,15 @@
                     <table class="table center-block">
                         <tr>
                             <td>
+                                {!! Form::open(["url"=>"createform?type=wxuser","method"=>"POST","class"=>"form-horizontal"]) !!}
+                                <div class='col-sm-2'>
+                                    <button type='submit' class='btn btn-success'>微信用户</button>
+                                </div>
+                                {!! Form::close() !!}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
                                 {!! Form::open(["url"=>"createform?type=dianpu","method"=>"POST","class"=>"form-horizontal"]) !!}
                                 <div class='col-sm-2'>
                                     <button type='submit' class='btn btn-success'>店铺</button>
