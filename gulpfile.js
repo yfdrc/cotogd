@@ -171,6 +171,7 @@ gulp.task('build:app', function() {
         .pipe(concat('app.css'))
         .pipe(gulp.dest(distapp+'/css'))
         .pipe(cssmin())
+        .pipe(rename({suffix: '.min'}))
         .pipe(gulp.dest(distapp+'/css'))
         .pipe(browserSync.reload({ stream: true }));
 
