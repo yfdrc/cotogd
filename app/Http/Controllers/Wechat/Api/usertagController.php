@@ -36,7 +36,7 @@ class usertagController extends Controller
     {
         $wechat = app('wechat');
         $userService = $wechat->user_tag;
-        $tagarr = json_decode($userService->lists(),true);
+        $tagarr = $userService->lists();
         $userService->delete($tagarr['tags'][1]['id']);
         return view('weixin.tag', ['ts' => '删除用户标签。' . Carbon::now()->toDateTimeString()]);
     }

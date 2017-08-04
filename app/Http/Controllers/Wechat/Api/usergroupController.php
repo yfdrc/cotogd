@@ -20,10 +20,11 @@ class usergroupController extends Controller
 
     public function edit()
     {
+//list{"groups":[{"id":0,"name":"未分组","count":2},{"id":1,"name":"黑名单","count":0},{"id":2,"name":"星标组","count":0},{"id":102,"name":"drc","count":0}]}
         try {
             $wechat = app('wechat');
-            $userService = $wechat->user_group;
-            $users = $userService->lists();
+            $groupService = $wechat->user_group;
+            $users = $groupService->lists();
         }catch (\Exception $ex)
         {
             $users = "没有用户组。";
@@ -34,16 +35,22 @@ class usergroupController extends Controller
 
     public function show()
     {
-        $openId = 'o4zG9wY6IC_d-AGw_iZEeF3OlFhw';
-        $wechat = app('wechat');
-        $userService = $wechat->user;
-        $user = $userService->get($openId);
-        $userxq = "nickname:$user->nickname  openid: $user->openid  remark: $user->remark";
-        return view('weixin.group', ['ts' => '用户组详情：' . $userxq . '  ' . Carbon::now()->toDateTimeString()]);
+        //$group->moveUser($openId, $groupId);
+
+        //$openIds = [$openId1, $openId2, $openId3 ...];
+        //$group->moveUsers($openIds, $groupId);
+
+        //$group->delete($groupId);
+
+        //$group->update($groupId, "新的组名");
     }
 
     public function create()
     {
-
+        //{"group":{"id":104,"name":"drczu2"}}
+        $wechat = app('wechat');
+        $groupService = $wechat->user_group;
+        $users = $groupService->create('drczu2');
+        return view('weixin.group', ['ts' => '创建用户组' . $users . Carbon::now()->toDateTimeString()]);
     }
 }

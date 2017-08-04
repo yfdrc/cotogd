@@ -34,8 +34,7 @@ class userController extends Controller
         try {
             $wechat = app('wechat');
             $userService = $wechat->user;
-            $userlists = $userService->lists();
-            $userobj = json_decode($userlists);
+            $userobj = $userService->lists();
 //            $total = $userobj->total;
 //            $count = $userobj->count;
 //            $nextopenid = $userobj->next_openid;
@@ -44,7 +43,7 @@ class userController extends Controller
             $userService = $wechat->user;
             foreach ($openid as $item){
                 if( !Wxuser::find($item) ){
-                    $user = json_decode($userService->get($item));
+                    $user = $userService->get($item);
                     $wxuser['nickname'] = $user->nickname;
                     $wxuser['remark'] = $user->remark;
                     $wxuser['address'] = $user->province . $user->city;
