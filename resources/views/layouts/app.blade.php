@@ -4,12 +4,12 @@
     <title>cotogd</title>
     <!-- CSS And JavaScript -->
     <!-- 新 Bootstrap 核心 CSS 文件 -->
-    {!! Html::style('/public/css/app.css') !!}
+    {!! Html::style('/public/css/app.min.css') !!}
     <!-- 可选的Bootstrap主题文件（一般不用引入） <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">  -->
     <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
     {{--{!! Html::script('/public/js/jquery.min.js') !!}--}}
     <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
-    {!! Html::script('/public/js/app.js') !!}
+    {!! Html::script('/public/js/app.min.js') !!}
 </head>
 
 <body>
@@ -86,13 +86,13 @@
                 <li class="dropdown">
                     <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">微信管理<b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                        <li>{!! link_to("wechatapimenu","自定义菜单") !!}</li>
-                        <li>{!! link_to("wechatapicast","群发内容") !!}</li>
-                        <li>{!! link_to("wechatapinotice","发送模版") !!}</li>
-                        <li>{!! link_to("wechatapiuser","用户管理") !!}</li>
-                        <li>{!! link_to("wechatapigroup","用户组管理") !!}</li>
-                        <li>{!! link_to("wechatapitag","用户标签管理") !!}</li>
-                        <li>{!! link_to("wechatapiqr","二维码管理") !!}</li>
+                        <li>{!! link_to("wechatshow?fname=wx01&bt=自定义菜单","自定义菜单") !!}</li>
+                        <li>{!! link_to("wechatshow?fname=wx02&bt=群发内容","群发内容") !!}</li>
+                        <li>{!! link_to("wechatshow?fname=wx03&bt=发送模版","发送模版") !!}</li>
+                        <li>{!! link_to("wechatshow?fname=wx04&bt=用户管理","用户管理") !!}</li>
+                        <li>{!! link_to("wechatshow?fname=wx05&bt=用户组管理","用户组管理") !!}</li>
+                        <li>{!! link_to("wechatshow?fname=wx06&bt=用户标签管理","用户标签管理") !!}</li>
+                        <li>{!! link_to("wechatshow?fname=wx07&bt=二维码管理","二维码管理") !!}</li>
                     </ul>
                 </li>
                 <li class="dropdown">

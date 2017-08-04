@@ -51,6 +51,9 @@ gulp.task('build:style', function() {
     gulp
         .src(srcstyle+'/*.js', { base: srcstyle })
         .pipe(gulp.dest(diststyle))
+        .pipe(uglify())
+        .pipe(rename({suffix: '.min'}))
+        .pipe(gulp.dest(diststyle))
         .pipe(browserSync.reload({ stream: true }));
 
     gulp
@@ -73,11 +76,7 @@ gulp.task('build:style', function() {
                 autoprefixer: false
             })
         )
-        .pipe(
-            rename(function(path) {
-                path.basename += '.min';
-            })
-        )
+        .pipe(rename({suffix: '.min'}))
         .pipe(gulp.dest(diststyle));
 });
 
@@ -115,11 +114,7 @@ gulp.task('build:example:style', function() {
                 autoprefixer: false
             })
         )
-        .pipe(
-            rename(function(path) {
-                path.basename += '.min';
-            })
-        )
+        .pipe(rename({suffix: '.min'}))
         .pipe(gulp.dest(diststyle))
         .pipe(browserSync.reload({ stream: true }));
 });
@@ -170,17 +165,31 @@ gulp.task('build:example', [
 ]);
 
 gulp.task('build:app', function() {
+    // gulp
+    //     .src(srcapp+'/sass/app.scss')
+    //     .pipe(sass().on('error', sass.logError))
+    //     .pipe(concat('app.css'))
+    //     .pipe(cssmin())
+    //     .pipe(gulp.dest(distapp+'/css'))
+    //     .pipe(browserSync.reload({ stream: true }));
+
     gulp
-        .src(srcapp+'/sass/*.scss')
-        .pipe(sass().on('error', sass.logError))
-        .pipe(concat('app.css'))
+        .src(srcapp+'/sass/bootstrap.css')
+        .pipe(rename(function(path) {
+            path.basename = 'app';
+        }))
+        .pipe(gulp.dest(distapp+'/css'))
         .pipe(cssmin())
+        .pipe(rename({suffix: '.min'}))
         .pipe(gulp.dest(distapp+'/css'))
         .pipe(browserSync.reload({ stream: true }));
 
     gulp
-        .src(srcapp+'/js/*.js')
+        .src([srcapp+'/js/jquery.js',srcapp+'/js/bootstrap.js'])
         .pipe(concat('app.js'))
+        .pipe(gulp.dest(distapp+'/js'))
+        .pipe(rename({suffix: '.min'}))
+        .pipe(uglify())
         .pipe(gulp.dest(distapp+'/js'))
         .pipe(browserSync.reload({ stream: true }));
 });

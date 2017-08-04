@@ -16,7 +16,24 @@ class userController extends Controller
 {
     public function index()
     {
-        return view('weixin.user');
+        return view('weixin.user.index');
+    }
+
+    public function create()
+    {
+
+    }
+    public function store(Request $request)
+    {
+    }
+
+    public function show()
+    {
+        $openId = 'o4zG9wY6IC_d-AGw_iZEeF3OlFhw';
+        $wechat = app('wechat');
+        $userService = $wechat->user;
+        $user = $userService->get($openId);
+        return view('weixin.user', ['ts' => '微信用户列表：' . $user . '  ' . Carbon::now()->toDateTimeString()]);
     }
 
     public function edit()
@@ -51,18 +68,11 @@ class userController extends Controller
         return view('weixin.user', ['ts' => '增加微信用户：' . $userlists]);
     }
 
-
-    public function show()
+    public function update(Request $request, $id)
     {
-        $openId = 'o4zG9wY6IC_d-AGw_iZEeF3OlFhw';
-        $wechat = app('wechat');
-        $userService = $wechat->user;
-        $user = $userService->get($openId);
-        return view('weixin.user', ['ts' => '微信用户列表：' . $user . '  ' . Carbon::now()->toDateTimeString()]);
     }
 
-    public function create()
+    public function destroy($id)
     {
-
     }
 }
