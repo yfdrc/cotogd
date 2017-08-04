@@ -165,24 +165,25 @@ gulp.task('build:example', [
 ]);
 
 gulp.task('build:app', function() {
-    // gulp
-    //     .src(srcapp+'/sass/app.scss')
-    //     .pipe(sass().on('error', sass.logError))
-    //     .pipe(concat('app.css'))
-    //     .pipe(cssmin())
-    //     .pipe(gulp.dest(distapp+'/css'))
-    //     .pipe(browserSync.reload({ stream: true }));
-
     gulp
-        .src(srcapp+'/sass/bootstrap.css')
-        .pipe(rename(function(path) {
-            path.basename = 'app';
-        }))
+        .src(srcapp+'/sass/app.scss')
+        .pipe(sass().on('error', sass.logError))
+        .pipe(concat('app.css'))
         .pipe(gulp.dest(distapp+'/css'))
         .pipe(cssmin())
-        .pipe(rename({suffix: '.min'}))
         .pipe(gulp.dest(distapp+'/css'))
         .pipe(browserSync.reload({ stream: true }));
+
+    // gulp
+    //     .src(srcapp+'/sass/bootstrap.css')
+    //     .pipe(rename(function(path) {
+    //         path.basename = 'app';
+    //     }))
+    //     .pipe(gulp.dest(distapp+'/css'))
+    //     .pipe(cssmin())
+    //     .pipe(rename({suffix: '.min'}))
+    //     .pipe(gulp.dest(distapp+'/css'))
+    //     .pipe(browserSync.reload({ stream: true }));
 
     gulp
         .src([srcapp+'/js/jquery.js',srcapp+'/js/bootstrap.js'])
