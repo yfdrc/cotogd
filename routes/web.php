@@ -105,6 +105,7 @@ Route::group(['namespace' => 'Wechat'], function () {
 //        Route::resource('wechatshow', 'showmenuController');
         Route::resource('wechatapiuser', 'userController');
         Route::resource('wechatapigroup', 'usergroupController');
+        Route::resource('wechatapigroup2', 'usergroup2Controller');
         Route::resource('wechatapiqr', 'qrcodeController');
         Route::resource('wechatapimenu', 'menuController');
         Route::resource('wechatapicast', 'broadcastController');

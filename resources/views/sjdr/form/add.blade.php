@@ -21,6 +21,13 @@
                                 </div>
                                 {!! Form::close() !!}
                             </td>
+                            <td>
+                                {!! Form::open(["url"=>"createform?type=wxgroup","method"=>"POST","class"=>"form-horizontal"]) !!}
+                                <div class='col-sm-2'>
+                                    <button type='submit' class='btn btn-success'>微信用户组</button>
+                                </div>
+                                {!! Form::close() !!}
+                            </td>
                         </tr>
                         <tr>
                             <td>

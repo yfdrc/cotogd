@@ -58,9 +58,9 @@
                         </div>
                     </div>
                     <div class='form-group'>
-                        {{ Form::label('groupid', '用户组号',['class'=>'col-sm-3 control-label']) }}
+                        {{ Form::label('group_id', '用户组号',['class'=>'col-sm-3 control-label']) }}
                         <div class='col-sm-6'>
-                            {{ Form::text('groupid', null, ['class'=>'form-control']) }}
+                            {{ Form::text('group_id', null, ['class'=>'form-control']) }}
                         </div>
                     </div>
                     <div class='form-group'>

@@ -725,22 +725,41 @@ class Drc implements DrcContract
     public function autoCreateForm($type)
     {
         switch ($type) {
+            case "wxgroup":
+                $lbroute = "wechatapigroup";
+                $path = "weixin/group";
+                $title = "微信用户组";
+                $cxun = "";
+                $qxcreate = 'create';
+                $qxedit = 'edit';
+                $qxdelete = 'admin';
+                $shortcutcreate = "快捷方式：@include(\"layouts.wx.wx04\")";
+                $shortcutedit = "快捷方式：@can(\"$qxcreate\", new \App\Model\Role){!! link_to(\"$lbroute/create\",\"增加$title\") !!} | @endcan {!! link_to(\"$lbroute/\$task->openid\",\"$title" . "详情\") !!} ||  @include(\"layouts.wx.wx04\")";
+                $shortcutindex = "快捷方式：@can(\"$qxcreate\", new \App\Model\Role){!! link_to(\"$lbroute/create\",\"增加$title\") !!} || @endcan @include(\"layouts.wx.wx04\")";
+                $shortcutshow = "快捷方式：@can(\"$qxcreate\", new \App\Model\Role){!! link_to(\"$lbroute/create\",\"增加$title\") !!} | @endcan @can(\"$qxedit\", new \App\Model\Role){!! link_to(\"$lbroute/\$task->openid/edit\",\"编辑$title\") !!} || @endcan @include(\"layouts.wx.wx04\")";
+                $create = [];
+                $showname = [];
+                $bx = ['id' => '序号','name' => '名称'];
+                $qt = [];
+                $lb = ['id' => '序号','name' => '名称','count' => '用户数'];
+                $xq = ['count' => '用户数'];
+                break;
             case "wxuser":
                 $lbroute = "wechatapiuser";
                 $path = "weixin/user";
                 $title = "微信用户";
                 $cxun = "";
                 $qxcreate = 'create';
-                $qxedit = 'create';
+                $qxedit = 'edit';
                 $qxdelete = 'admin';
                 $shortcutcreate = "快捷方式：@include(\"layouts.wx.wx04\")";
                 $shortcutedit = "快捷方式：@can(\"$qxcreate\", new \App\Model\Role){!! link_to(\"$lbroute/create\",\"增加$title\") !!} | @endcan {!! link_to(\"$lbroute/\$task->openid\",\"$title" . "详情\") !!} ||  @include(\"layouts.wx.wx04\")";
                 $shortcutindex = "快捷方式：@can(\"$qxcreate\", new \App\Model\Role){!! link_to(\"$lbroute/create\",\"增加$title\") !!} || @endcan @include(\"layouts.wx.wx04\")";
                 $shortcutshow = "快捷方式：@can(\"$qxcreate\", new \App\Model\Role){!! link_to(\"$lbroute/create\",\"增加$title\") !!} | @endcan @can(\"$qxedit\", new \App\Model\Role){!! link_to(\"$lbroute/\$task->openid/edit\",\"编辑$title\") !!} || @endcan @include(\"layouts.wx.wx04\")";
-                $create = ['openid' => '识别号'];
+                $create = ['group_id' => '用户组号'];
                 $showname = [];
-                $bx = ['nickname' => '昵称','remark' => '手机号','address' => '地址','xh1name' => '小孩1','xh2name' => '小孩2','xh3name' => '小孩3'];
-                $qt = ['groupid' => '用户组号'];
+                $bx = ['openid' => '识别号','nickname' => '昵称','remark' => '手机号','address' => '地址','xh1name' => '小孩1','xh2name' => '小孩2','xh3name' => '小孩3'];
+                $qt = [];
                 $lb = ['nickname' => '昵称','remark' => '手机号','address' => '地址','xh1name' => '小孩1','xh2name' => '小孩2','xh3name' => '小孩3','subtime' => '加入日期'];
                 $xq = ['subtime' => '加入日期'];
                 break;

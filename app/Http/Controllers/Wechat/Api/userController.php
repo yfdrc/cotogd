@@ -13,7 +13,6 @@ use App\Model\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use App\Model\Wxuser;
-use Carbon\Carbon;
 
 class userController extends Controller
 {
