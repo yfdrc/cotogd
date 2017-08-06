@@ -5,12 +5,12 @@
 
     <div class="panel panel-success">
         <div class="panel-heading">
-            快捷方式：@can("create", new \App\Model\Role){!! link_to("wechatapiqr/create","增加微信二维码") !!} | @endcan @can("create", new \App\Model\Role){!! link_to("wechatapiqr/$task->id/edit","编辑微信二维码") !!} || @endcan @include("layouts.wx.wx04")
+            快捷方式：@can("create", new \App\Model\Role){!! link_to("wechatapiqr/create","增加微信课程二维码") !!} | @endcan @can("create", new \App\Model\Role){!! link_to("wechatapiqr/$task->id/edit","编辑微信课程二维码") !!} || @endcan @include("layouts.wx.wx04")
         </div>
         <div class="panel-body">
             <div class="panel panel-primary">
                 <div class="panel-heading">
-                    微信二维码详情
+                    微信课程二维码详情
                 </div>
                 <div class="panel-body">
                     {!!  Form::model($task, ['url'=>"wechatapiqr/$task->id", "method" => "DELETE", "class" => "form-horizontal"]) !!}

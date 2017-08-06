@@ -5,13 +5,13 @@
 
     <div class="panel panel-default">
         <div class="panel-heading">
-            快捷方式：@can("create", new \App\Model\Role){!! link_to("wechatapiqr/create","增加微信二维码") !!} || @endcan @include("layouts.wx.wx04")
+            快捷方式：@can("create", new \App\Model\Role){!! link_to("wechatapiqr/create","增加微信课程二维码") !!} || @endcan @include("layouts.wx.wx04")
         </div>
         <div class="panel-body">
             @if (count($tasks) > 0)
                 <div class="panel panel-info">
                     <div class="panel-heading">
-                        微信二维码列表
+                        微信课程二维码列表
                     </div>
                     <div class="panel-body">
                         <table class='table table-striped task-table'>

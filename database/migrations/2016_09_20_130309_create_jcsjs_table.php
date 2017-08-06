@@ -61,7 +61,7 @@ class CreateJcsjsTable extends Migration
             $table->timestamps();
             $table->unique(['dianpu_id','bh']);
             $table->unique(['dianpu_id','name']);
-            $table->unique(['dianpu_id','tele']);
+            $table->unique(['tele']);
             $table->foreign('dianpu_id') ->references('id') ->on('dianpus')->onUpdate('cascade')->onDelete('cascade');
         });
         Schema::create('xueyuans', function (Blueprint $table) {

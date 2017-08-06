@@ -9,6 +9,7 @@
 phpunit.xml
 *.log
 *.txt
+*.csv
 *.cmd
 *.sh
 /.gitattributes

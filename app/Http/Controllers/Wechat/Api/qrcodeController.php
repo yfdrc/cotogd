@@ -29,7 +29,7 @@ class qrcodeController extends Controller
 
     public function create()
     {
-        $fhz = drc_selectidname('kechengs','dianpu_id',auth()->user()->dianpu_id);
+        $fhz = drc_selectidname('kechengs','dianpu_id',auth()->user()->dianpu_id,'=','name','same');
         return view('weixin.qr.create', ['kc'=> $fhz]);
     }
 
@@ -45,7 +45,9 @@ class qrcodeController extends Controller
         $qr['scene_str'] = $name;
         $qr['ticket'] = $result->ticket;
         $qr['url'] = $qrService->url($qr['ticket']);
-        Wxqr::create($qr);
+        if(!Wxqr::where('scene_str',$name)->first()) {
+            Wxqr::create($qr);
+        }
 
         return redirect(url('wechatapiqr'))->withInput(['创建永久二维码：'.$name]);
     }

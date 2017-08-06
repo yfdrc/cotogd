@@ -29,7 +29,11 @@ if (!function_exists('drc_selectidname')) {
             }
         }
         foreach ($temp as $item) {
-            $temp2 = array_combine(['TMPPRE' . $item->id], [$item->$fhcol]);
+            if ($czbz == 'same') {
+                $temp2 = array_combine([$item->$fhcol], [$item->$fhcol]);
+            }else {
+                $temp2 = array_combine(['TMPPRE' . $item->id], [$item->$fhcol]);
+            }
             $fhz = array_merge($fhz, $temp2);
         }
         return $fhz;

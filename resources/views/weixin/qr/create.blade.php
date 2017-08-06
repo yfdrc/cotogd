@@ -10,7 +10,7 @@
         <div class="panel-body">
             <div class="panel panel-success">
                 <div class="panel-heading">
-                    新建微信二维码
+                    新建微信课程二维码
                 </div>
                 <div class="panel-body">
                     {!! Form::open(["url"=>"wechatapiqr","method"=>"POST","class"=>"form-horizontal"]) !!}

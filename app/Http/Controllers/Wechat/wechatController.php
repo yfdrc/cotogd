@@ -9,8 +9,10 @@
 namespace App\Http\Controllers\Wechat;
 
 use App\Http\Controllers\Controller;
+use App\Model\Jiazhang;
 use App\Model\Wxgroup;
 use App\Model\Wxuser;
+use App\Model\Xueyuan;
 use Carbon\Carbon;
 use EasyWeChat\Message\Location;
 use EasyWeChat\Support\Log;
@@ -28,7 +30,7 @@ class wechatController extends Controller
                         case 'subscribe':
                             //{"ToUserName":"gh_f21725d36b7c",
                             //"FromUserName":"o4zG9wY6IC_d-AGw_iZEeF3OlFhw",
-                             //"CreateTime":"1501775822",
+                            //"CreateTime":"1501775822",
                             //"MsgType":"event",
                             //"Event":"subscribe",
                             //"EventKey":null}
@@ -76,13 +78,33 @@ class wechatController extends Controller
                             //{"ToUserName":"gh_f21725d36b7c","FromUserName":"o4zG9wY6IC_d-AGw_iZEeF3OlFhw","CreateTime":"1501776210","MsgType":"event","Event":"VIEW","EventKey":"http://112.74.161.57/cotogd/example","MenuId":"424658939"}
                             break;
                         case 'SCAN':
-                            //{"ToUserName":"gh_f21725d36b7c",
-                            //"FromUserName":"o4zG9wY6IC_d-AGw_iZEeF3OlFhw",
-                            //"CreateTime":"1501779805",
-                            //"MsgType":"event",
-                            //"Event":"SCAN",
                             //"EventKey":"drc",
                             //"Ticket":"gQHo8DwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAyZ0dXbWQ4ek5lWjExMDAwMDAwN0EAAgSaQn1ZAwQAAAAA"}
+                            if(Carbon::now()->minute<30){
+                                $sktime = Carbon::now()->toDateTimeString('Y-m-d H:00:00');
+                            } else {
+                                $sktime = Carbon::now()->addHour(1)->toDateTimeString('Y-m-d H:00:00');
+                            }
+                            $from = $message->FromUserName;
+                            $kcname = $message->EventKey;
+                            $jz = Jiazhang::where('tele', Wxuser::find($from)->telephone);
+                             if(!$jz) {
+                                $xys = Xueyuan::where('jiazhang_id', $jz->first()->id);
+                                if(!$xys) {
+                                    if ($xys->count() > 1) {
+                                        foreach ($xys as $xy) {
+
+                                        }
+                                    }else{
+                                        $xhname = $xys->first()->name;
+                                        return "扣课信息：小孩姓名为$xhname,课程名称为 $kcname,上课时间为$sktime";
+                                    }
+                                } else {
+                                    return "没有找到小孩信息，请与工作人员联系。";
+                                }
+                            } else {
+                                return "没有找到家长信息，请与工作人员联系。";
+                            }
                             break;
                         case 'scancode_waitmsg':
                             //{"ToUserName":"gh_f21725d36b7c","FromUserName":"o4zG9wY6IC_d-AGw_iZEeF3OlFhw","CreateTime":"1501778410","MsgType":"event","Event":"scancode_waitmsg","EventKey":"rselfmenu_0_0","ScanCodeInfo":{"ScanType":"qrcode","ScanResult":"http://weixin.qq.com/r/NTrt9WfEtjrJrSOW928n"}}
