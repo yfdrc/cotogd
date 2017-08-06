@@ -82,14 +82,20 @@ class wechatController extends Controller
                         case 'SCAN':
                             //"EventKey":"drc",
                             //"Ticket":"gQHo8DwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAyZ0dXbWQ4ek5lWjExMDAwMDAwN0EAAgSaQn1ZAwQAAAAA"}
+                            $from = $message->FromUserName;
+                            $kcname = $message->EventKey;
+                            $wuser = Wxuser::find($from);
+                            $tm = time();
+                            if($tm - $wuser->scantime < 10){
+                                return "两次扫码间隔至少10秒。";
+                            }
+                            $wuser->update(['scantime'=>$tm]);
                             if(Carbon::now()->minute<30){
                                 $sktime = Carbon::now()->addHour(8)->format('Y/m/d H').":00";
                             } else {
                                 $sktime = Carbon::now()->addHour(9)->format('Y/m/d H').":00";
                             }
-                            $from = $message->FromUserName;
-                            $kcname = $message->EventKey;
-                            $jz = Jiazhang::where('tele', Wxuser::find($from)->remark)->first();
+                            $jz = Jiazhang::where('tele', $wuser->remark)->first();
                             if($jz) {
                                 $kouke['dianpu_id'] = $jz['dianpu_id'];
                                 $kouke['kecheng_id'] = Kecheng::where([['dianpu_id',$kouke['dianpu_id']],['name',$kcname]])->first()->id;
@@ -97,43 +103,50 @@ class wechatController extends Controller
                                 if($xys) {
                                     if (count($xys) > 1) {
                                         $xyxx ='';
-                                        $xyid = [];
-                                        $xyname = [];
+                                        $xyidarr = [];
+                                        $xynamearr = [];
                                         foreach ($xys as $xy) {
-                                            array_push($xyid , $xy['id']);
-                                            array_push($xyname , $xy['name']);
+                                            array_push($xyidarr , $xy['id']);
+                                            array_push($xynamearr , $xy['name']);
                                             $xyxx = $xyxx . $xy['name'] . '学号为' .$xy['id'] . ';';
                                         }
-                                        $xyname = $xyname[0];
-                                        $kouke['xueyuan_id'] = $xyid[0];
+                                        $xyname = $xynamearr[0];
+                                        $kouke['xueyuan_id'] = $xyidarr[0];
                                         $kk = Kouke::where([['dianpu_id',$kouke['dianpu_id']],['xueyuan_id',$kouke['xueyuan_id']],['kecheng_id',$kouke['kecheng_id']]])->first();
                                         if(!$kk){
+                                            //没有第一学员首次扣课记录
                                             $kouke['studTime'] = $sktime . ';';
                                             $kouke['studKs'] = 1;
                                             Kouke::create($kouke);
                                         } else {
+                                            //已有第一学员首次扣课记录
                                             if(str_contains($kk['studTime'],$sktime)){
-                                                $xyname = $xyname[1];
-                                                $kouke['xueyuan_id'] = $xyid[1];
+                                                //已有第一学员本次扣课信息
+                                                $xyname = $xynamearr[1];
+                                                $kouke['xueyuan_id'] = $xyidarr[1];
                                                 $kk2 = Kouke::where([['dianpu_id',$kouke['dianpu_id']],['xueyuan_id',$kouke['xueyuan_id']],['kecheng_id',$kouke['kecheng_id']]])->first();
                                                 if(!$kk2){
+                                                    //没有第二小孩首次扣课信息
                                                     $kouke['studTime'] = $sktime . ';';
                                                     $kouke['studKs'] = 1;
                                                     Kouke::create($kouke);
                                                 } else {
+                                                    //已有第二小孩首次扣课信息
                                                     if (str_contains($kk2['studTime'], $sktime)) {
                                                         return "上课信息：同一家长同一时段同一课程系统最多允许两个小朋友上课，请你不要重复扫码。";
                                                     }else{
-                                                        $kouke['studTime'] = $kouke['studTime'] . $sktime . ';';
-                                                        $kouke['studKs'] += 1;
-                                                        Kouke::updated($kouke);
+                                                        //没有第二学员本次扣课信息
+                                                        $kouke['studTime'] = $kk2['studTime'] . $sktime . ';';
+                                                        $kouke['studKs'] = $kk2['studKs'] + 1;
+                                                        $kk2->update(['studTime'=>$kouke['studTime'],'studKs'=>$kouke['studKs']]);
                                                     }
                                                 }
                                                 return "上课信息：小孩为". $xyname."，课程为".$kcname."，时间为".$sktime."。";
                                             }else{
-                                                $kouke['studTime'] = $kouke['studTime'] . $sktime . ';';
-                                                $kouke['studKs'] += 1;
-                                                Kouke::updated($kouke);
+                                                //没有第一学员本次扣课信息
+                                                $kouke['studTime'] = $kk['studTime'] . $sktime . ';';
+                                                $kouke['studKs'] = $kk['studKs'] + 1;
+                                                $kk->update(['studTime'=>$kouke['studTime'],'studKs'=>$kouke['studKs']]);
                                             }
                                         }
                                         return "上课信息：小孩为". $xyname."，课程为".$kcname."，时间为".$sktime."。请注意，".$xyxx."如果上课小孩不对，请回复：GGXY+学号。";
@@ -149,9 +162,9 @@ class wechatController extends Controller
                                             if(str_contains($kk['studTime'],$sktime)){
                                                 return "上课信息：系统只登记了一个小朋友资料，请你不要重复扫码。";
                                             }else{
-                                                $kouke['studTime'] = $kouke['studTime'] . $sktime . ';';
-                                                $kouke['studKs'] += 1;
-                                                Kouke::updated($kouke);
+                                                $kouke['studTime'] = $kk['studTime'] . $sktime . ';';
+                                                $kouke['studKs'] = $kk['studKs'] + 1;
+                                                $kk->update(['studTime'=>$kouke['studTime'],'studKs'=>$kouke['studKs']]);
                                             }
                                         }
                                         return "上课信息：小孩为". $xyname."，课程为".$kcname."，时间为".$sktime."。";
