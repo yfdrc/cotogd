@@ -34,13 +34,11 @@ class userController extends Controller
         try {
             $wechat = app('wechat');
             $userService = $wechat->user;
-            $userobj = $userService->lists();
+            $userobj =\GuzzleHttp\json_decode($userService->lists());
 //            $total = $userobj->total;
 //            $count = $userobj->count;
 //            $nextopenid = $userobj->next_openid;
             $openid = $userobj->data->openid;
-            $wxuser = array();
-            $userService = $wechat->user;
             foreach ($openid as $item){
                 if( !Wxuser::find($item) ){
                     $user = $userService->get($item);
@@ -57,7 +55,7 @@ class userController extends Controller
         {
             $userlists = "错误：$ex";
         }
-        return view('weixin.user.create', ['ts' => '一次性写入微信用户：' . $userlists]);
+        return view('weixin.user.create', ['ts' => '一次性写入微信用户成功。']);
     }
     public function store(Request $request)
     {

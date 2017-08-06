@@ -33,27 +33,15 @@
                         </div>
                     </div>
                     <div class='form-group'>
-                        {{ Form::label('xh1name', '小孩1',['class'=>'col-sm-3 control-label']) }}
-                        <div class='col-sm-6'>
-                            {{ $task->xh1name }}
-                        </div>
-                    </div>
-                    <div class='form-group'>
-                        {{ Form::label('xh2name', '小孩2',['class'=>'col-sm-3 control-label']) }}
-                        <div class='col-sm-6'>
-                            {{ $task->xh2name }}
-                        </div>
-                    </div>
-                    <div class='form-group'>
-                        {{ Form::label('xh3name', '小孩3',['class'=>'col-sm-3 control-label']) }}
-                        <div class='col-sm-6'>
-                            {{ $task->xh3name }}
-                        </div>
-                    </div>
-                    <div class='form-group'>
                         {{ Form::label('group_id', '用户组号',['class'=>'col-sm-3 control-label']) }}
                         <div class='col-sm-6'>
                             {{ $task->group->name }}
+                        </div>
+                    </div>
+                    <div class='form-group'>
+                        {{ Form::label('xh3name', '最近上课',['class'=>'col-sm-3 control-label']) }}
+                        <div class='col-sm-6'>
+                            {{  $task->scantime==0?'':Carbon\Carbon::createFromTimestamp($task->scantime)->addHour(8)->toDateTimeString() }}
                         </div>
                     </div>
                     <div class='form-group'>

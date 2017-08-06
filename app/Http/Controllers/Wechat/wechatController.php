@@ -10,6 +10,8 @@ namespace App\Http\Controllers\Wechat;
 
 use App\Http\Controllers\Controller;
 use App\Model\Jiazhang;
+use App\Model\Kecheng;
+use App\Model\Kouke;
 use App\Model\Wxgroup;
 use App\Model\Wxuser;
 use App\Model\Xueyuan;
@@ -81,36 +83,92 @@ class wechatController extends Controller
                             //"EventKey":"drc",
                             //"Ticket":"gQHo8DwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAyZ0dXbWQ4ek5lWjExMDAwMDAwN0EAAgSaQn1ZAwQAAAAA"}
                             if(Carbon::now()->minute<30){
-                                $sktime = Carbon::now()->toDateTimeString('Y-m-d H:00:00');
+                                $sktime = Carbon::now()->addHour(8)->format('Y/m/d H').":00";
                             } else {
-                                $sktime = Carbon::now()->addHour(1)->toDateTimeString('Y-m-d H:00:00');
+                                $sktime = Carbon::now()->addHour(9)->format('Y/m/d H').":00";
                             }
                             $from = $message->FromUserName;
                             $kcname = $message->EventKey;
-                            $jz = Jiazhang::where('tele', Wxuser::find($from)->telephone);
-                             if(!$jz) {
-                                $xys = Xueyuan::where('jiazhang_id', $jz->first()->id);
-                                if(!$xys) {
-                                    if ($xys->count() > 1) {
+                            $jz = Jiazhang::where('tele', Wxuser::find($from)->remark)->first();
+                            if($jz) {
+                                $kouke['dianpu_id'] = $jz['dianpu_id'];
+                                $kouke['kecheng_id'] = Kecheng::where([['dianpu_id',$kouke['dianpu_id']],['name',$kcname]])->first()->id;
+                                $xys = Xueyuan::where([['dianpu_id',$kouke['dianpu_id']],['jiazhang_id', $jz['id']]])->get();
+                                if($xys) {
+                                    if (count($xys) > 1) {
+                                        $xyxx ='';
+                                        $xyid = [];
+                                        $xyname = [];
                                         foreach ($xys as $xy) {
-
+                                            array_push($xyid , $xy['id']);
+                                            array_push($xyname , $xy['name']);
+                                            $xyxx = $xyxx . $xy['name'] . '学号为' .$xy['id'] . ';';
                                         }
+                                        $xyname = $xyname[0];
+                                        $kouke['xueyuan_id'] = $xyid[0];
+                                        $kk = Kouke::where([['dianpu_id',$kouke['dianpu_id']],['xueyuan_id',$kouke['xueyuan_id']],['kecheng_id',$kouke['kecheng_id']]])->first();
+                                        if(!$kk){
+                                            $kouke['studTime'] = $sktime . ';';
+                                            $kouke['studKs'] = 1;
+                                            Kouke::create($kouke);
+                                        } else {
+                                            if(str_contains($kk['studTime'],$sktime)){
+                                                $xyname = $xyname[1];
+                                                $kouke['xueyuan_id'] = $xyid[1];
+                                                $kk2 = Kouke::where([['dianpu_id',$kouke['dianpu_id']],['xueyuan_id',$kouke['xueyuan_id']],['kecheng_id',$kouke['kecheng_id']]])->first();
+                                                if(!$kk2){
+                                                    $kouke['studTime'] = $sktime . ';';
+                                                    $kouke['studKs'] = 1;
+                                                    Kouke::create($kouke);
+                                                } else {
+                                                    if (str_contains($kk2['studTime'], $sktime)) {
+                                                        return "上课信息：同一家长同一时段同一课程系统最多允许两个小朋友上课，请你不要重复扫码。";
+                                                    }else{
+                                                        $kouke['studTime'] = $kouke['studTime'] . $sktime . ';';
+                                                        $kouke['studKs'] += 1;
+                                                        Kouke::updated($kouke);
+                                                    }
+                                                }
+                                                return "上课信息：小孩为". $xyname."，课程为".$kcname."，时间为".$sktime."。";
+                                            }else{
+                                                $kouke['studTime'] = $kouke['studTime'] . $sktime . ';';
+                                                $kouke['studKs'] += 1;
+                                                Kouke::updated($kouke);
+                                            }
+                                        }
+                                        return "上课信息：小孩为". $xyname."，课程为".$kcname."，时间为".$sktime."。请注意，".$xyxx."如果上课小孩不对，请回复：GGXY+学号。";
                                     }else{
-                                        $xhname = $xys->first()->name;
-                                        return "扣课信息：小孩姓名为$xhname,课程名称为 $kcname,上课时间为$sktime";
+                                        $xyname = $xys->first()->name;
+                                        $kouke['xueyuan_id'] = $xys->first()->id;
+                                        $kk = Kouke::where([['dianpu_id',$kouke['dianpu_id']],['xueyuan_id',$kouke['xueyuan_id']],['kecheng_id',$kouke['kecheng_id']]])->first();
+                                        if(!$kk){
+                                            $kouke['studTime'] = $sktime . ';';
+                                            $kouke['studKs'] = 1;
+                                            Kouke::create($kouke);
+                                        } else {
+                                            if(str_contains($kk['studTime'],$sktime)){
+                                                return "上课信息：系统只登记了一个小朋友资料，请你不要重复扫码。";
+                                            }else{
+                                                $kouke['studTime'] = $kouke['studTime'] . $sktime . ';';
+                                                $kouke['studKs'] += 1;
+                                                Kouke::updated($kouke);
+                                            }
+                                        }
+                                        return "上课信息：小孩为". $xyname."，课程为".$kcname."，时间为".$sktime."。";
                                     }
                                 } else {
-                                    return "没有找到小孩信息，请与工作人员联系。";
+                                    return "上课信息：没有找到小孩信息，请与工作人员联系。";
                                 }
                             } else {
-                                return "没有找到家长信息，请与工作人员联系。";
+                                return "上课信息：没有找到家长信息，请与工作人员联系。";
                             }
-                            break;
-                        case 'scancode_waitmsg':
-                            //{"ToUserName":"gh_f21725d36b7c","FromUserName":"o4zG9wY6IC_d-AGw_iZEeF3OlFhw","CreateTime":"1501778410","MsgType":"event","Event":"scancode_waitmsg","EventKey":"rselfmenu_0_0","ScanCodeInfo":{"ScanType":"qrcode","ScanResult":"http://weixin.qq.com/r/NTrt9WfEtjrJrSOW928n"}}
                             break;
                         case 'scancode_push':
                             //{"ToUserName":"gh_f21725d36b7c","FromUserName":"o4zG9wY6IC_d-AGw_iZEeF3OlFhw","CreateTime":"1501778420","MsgType":"event","Event":"scancode_push","EventKey":"rselfmenu_0_1","ScanCodeInfo":{"ScanType":"qrcode","ScanResult":"http://weixin.qq.com/r/NTrt9WfEtjrJrSOW928n"}}
+                            return '';
+                            break;
+                        case 'scancode_waitmsg':
+                            //{"ToUserName":"gh_f21725d36b7c","FromUserName":"o4zG9wY6IC_d-AGw_iZEeF3OlFhw","CreateTime":"1501778410","MsgType":"event","Event":"scancode_waitmsg","EventKey":"rselfmenu_0_0","ScanCodeInfo":{"ScanType":"qrcode","ScanResult":"http://weixin.qq.com/r/NTrt9WfEtjrJrSOW928n"}}
                             break;
                         case 'LOCATION':
                             //{"ToUserName":"gh_f21725d36b7c","FromUserName":"o4zG9wY6IC_d-AGw_iZEeF3OlFhw","CreateTime":"1501777062","MsgType":"event","Event":"LOCATION","Latitude":"22.941250","Longitude":"112.051453","Precision":"30.000000"}

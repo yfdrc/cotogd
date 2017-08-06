@@ -27,10 +27,7 @@ class CreateWxuserlistTable extends Migration
             $table->string('address', 64)->nullable();
             $table->integer('group_id')->unsigned()->default(0);
             $table->integer('subtime')->default(0);
-            $table->string('telephone', 32)->nullable();
-            $table->string('xh1name', 32)->nullable();
-            $table->string('xh2name', 32)->nullable();
-            $table->string('xh3name', 32)->nullable();
+            $table->integer('scantime')->default(0);
             $table->timestamps();
             $table->primary('openid');
             $table->foreign('group_id') ->references('id') ->on('wxgroups')->onUpdate('cascade')->onDelete('cascade');

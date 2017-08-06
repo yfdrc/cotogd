@@ -19,9 +19,8 @@
                             <th>昵称</th>
                             <th>手机号</th>
                             <th>地址</th>
-                            <th>小孩1</th>
-                            <th>小孩2</th>
                             <th>所在组</th>
+                            <th>最近上课</th>
                             <th>加入时间</th>
                             <th></th>
                             </thead>
@@ -38,13 +37,10 @@
                                         <div>{{ $task->address }}</div>
                                     </td>
                                     <td class='table-text'>
-                                        <div>{{ $task->xh1name }}</div>
-                                    </td>
-                                    <td class='table-text'>
-                                        <div>{{ $task->xh2name }}</div>
-                                    </td>
-                                    <td class='table-text'>
                                         <div>{{ $task->group->name }}</div>
+                                    </td>
+                                    <td class='table-text'>
+                                        <div>{{ $task->scantime==0?'':Carbon\Carbon::createFromTimestamp($task->scantime)->addHour(8)->toDateString() }}</div>
                                     </td>
                                     <td class='table-text'>
                                         <div>{{ Carbon\Carbon::createFromTimestamp($task->subtime)->addHour(8)->toDateString() }}</div>
