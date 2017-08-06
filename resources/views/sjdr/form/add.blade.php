@@ -15,16 +15,9 @@
                     <table class="table center-block">
                         <tr>
                             <td>
-                                {!! Form::open(["url"=>"createform?type=wxuser","method"=>"POST","class"=>"form-horizontal"]) !!}
+                                {!! Form::open(["url"=>"createform?type=wxqr","method"=>"POST","class"=>"form-horizontal"]) !!}
                                 <div class='col-sm-2'>
-                                    <button type='submit' class='btn btn-success'>微信用户</button>
-                                </div>
-                                {!! Form::close() !!}
-                            </td>
-                            <td>
-                                {!! Form::open(["url"=>"createform?type=wxgroup","method"=>"POST","class"=>"form-horizontal"]) !!}
-                                <div class='col-sm-2'>
-                                    <button type='submit' class='btn btn-success'>微信用户组</button>
+                                    <button type='submit' class='btn btn-success'>微信QR</button>
                                 </div>
                                 {!! Form::close() !!}
                             </td>

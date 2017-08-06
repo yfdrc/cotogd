@@ -43,24 +43,24 @@
                                     {{ Form::text('xh1name', null, ['class'=>'form-control']) }}
                                 </div>
                             </div>
-                            <div class='form-group'>
-                                {{ Form::label('xh2name', '小孩2',['class'=>'col-sm-3 control-label']) }}
-                                <div class='col-sm-6'>
-                                    {{ Form::text('xh2name', null, ['class'=>'form-control']) }}
-                                </div>
-                            </div>
-                            <div class='form-group'>
-                                {{ Form::label('xh3name', '小孩3',['class'=>'col-sm-3 control-label']) }}
-                                <div class='col-sm-6'>
-                                    {{ Form::text('xh3name', null, ['class'=>'form-control']) }}
-                                </div>
-                            </div>
+                        </div>
+                    </div>
+                    <div class='form-group'>
+                        {{ Form::label('xh2name', '小孩2',['class'=>'col-sm-3 control-label']) }}
+                        <div class='col-sm-6'>
+                            {{ Form::text('xh2name', null, ['class'=>'form-control']) }}
+                        </div>
+                    </div>
+                    <div class='form-group'>
+                        {{ Form::label('xh3name', '小孩3',['class'=>'col-sm-3 control-label']) }}
+                        <div class='col-sm-6'>
+                            {{ Form::text('xh3name', null, ['class'=>'form-control']) }}
                         </div>
                     </div>
                     <div class='form-group'>
                         {{ Form::label('group_id', '用户组号',['class'=>'col-sm-3 control-label']) }}
                         <div class='col-sm-6'>
-                            {{ Form::text('group_id', null, ['class'=>'form-control']) }}
+                            {{ Form::select('group_id', $gp, 'TMPPRE'.$task->group_id, ['class'=>'form-control']) }}
                         </div>
                     </div>
                     <div class='form-group'>

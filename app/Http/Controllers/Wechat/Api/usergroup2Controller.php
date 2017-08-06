@@ -10,10 +10,36 @@ namespace App\Http\Controllers\Wechat\Api;
 
 use App\Http\Controllers\Controller;
 use App\Model\Wxgroup;
+use App\Model\Wxuser;
 use Illuminate\Http\Request;
 
 class usergroup2Controller extends Controller
 {
+    //group原始资料
+    public function show($id)
+    {
+        $wechat = app('wechat');
+        $groupService = $wechat->user_group;
+        $groupobj = $groupService->lists();
+
+        return view('weixin.group', [ 'ts' => $groupobj]);
+    }
+    //user原始资料
+    public function edit($id)
+    {
+        $wechat = app('wechat');
+        $userService = $wechat->user;
+        $userobj = $userService->get('o4zG9wY6IC_d-AGw_iZEeF3OlFhw');
+        return view('weixin.group', [ 'ts' => $userobj]);
+    }
+
+    public function index()
+    {
+        $models = Wxuser::orderBy('subtime', 'desc')->paginate(100);
+        $fhz = drc_selectidname('wxgroups');
+        return view('weixin.group.move', [ 'tasks' => $models, 'gp'=> $fhz]);
+    }
+
     public function create()
     {
         try {
@@ -21,42 +47,18 @@ class usergroup2Controller extends Controller
             $wechat = app('wechat');
             $groupService = $wechat->user_group;
             $groupobj = $groupService->lists();
-            $groupfhz = '';
-            foreach ($groupobj as $item){
-                if( !Wxgroup::find($item->id) ){
-                    $wxgroup['id'] = $item->id;
-                    $wxgroup['name'] = $item->name;
-                    $wxgroup['count'] = $item->count;
-                    $groupfhz += Wxgroup::create($wxgroup);
+            $groupfhz = '成功执行。';
+            foreach ($groupobj as $items){
+                foreach ($items as $item) {
+                    if (!Wxgroup::find($item['id'])) {
+                        Wxgroup::create($item);
+                    }
                 }
             }
         }catch (\Exception $ex)
         {
-            $groupfhz += $ex;
+            $groupfhz = $ex;
         }
         return redirect(url('wechatapigroup'))->withErrors(['一次性写入微信用户组：' . $groupfhz]);
-    }
-
-    public function edit($id)
-    {
-        $models = Wxgroup::paginate(100);
-        $fhz = drc_selectidname('wxgroups');
-        return view('weixin.group.move', [ 'tasks' => $models,'gp'=> $fhz]);
-    }
-
-    public function update(Request $request, $id)
-    {
-        //$item:$openIds = [$openId1, $openId2, $openId3 ...];$openId;
-        $input = $request->all();
-        $groupId = $input['input'];
-        $tomove = $input['tomove'];
-        $wechat = app('wechat');
-        $groupService = $wechat->user_group;
-        if(is_array($tomove)){
-            $groupfhz = $groupService->moveUsers($tomove, $groupId);
-        }else{
-            $groupfhz = $groupService->moveUser($tomove, $groupId);
-        }
-        return redirect(url('wechatapigroup'))->withErrors(['移入新用户组：' . $groupfhz]);
     }
 }

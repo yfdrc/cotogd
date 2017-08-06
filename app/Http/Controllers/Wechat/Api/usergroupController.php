@@ -37,6 +37,7 @@ class usergroupController extends Controller
     {
         //{"group":{"id":104,"name":"drczu2"}}
         try {
+            $this->validate($request, ['name' => 'required']);
             $name = request()->get("groupname");
             $wechat = app('wechat');
             $groupService = $wechat->user_group;
@@ -64,13 +65,13 @@ class usergroupController extends Controller
     public function update(Request $request, $id)
     {
         try {
+            $this->validate($request, ['name' => 'required']);
             $input = $request->all();
             $wechat = app('wechat');
             $groupService = $wechat->user_group;
             $groupfhz = $groupService->update($id, $input['name']);
 
             $model = Wxgroup::findOrFail($id);
-            $this->validate($request, ['name' => 'required']);
             $model->fill($input)->save();
             return redirect(url('wechatapigroup'));
         } catch (\Exception $ex) {

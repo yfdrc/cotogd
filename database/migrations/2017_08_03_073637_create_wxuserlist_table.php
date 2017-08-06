@@ -16,6 +16,7 @@ class CreateWxuserlistTable extends Migration
         Schema::create('wxgroups', function (Blueprint $table) {
             $table->integer('id')->unsigned();
             $table->string('name', 128);
+            $table->integer('count');
             $table->timestamps();
             $table->primary('id');
         });

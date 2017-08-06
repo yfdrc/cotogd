@@ -53,13 +53,13 @@
                     <div class='form-group'>
                         {{ Form::label('group_id', '用户组号',['class'=>'col-sm-3 control-label']) }}
                         <div class='col-sm-6'>
-                            {{ $task->group_id }}
+                            {{ $task->group->name }}
                         </div>
                     </div>
                     <div class='form-group'>
                         {{ Form::label('subtime', '加入日期',['class'=>'col-sm-3 control-label']) }}
                         <div class='col-sm-6'>
-                            {{ $task->subtime }}
+                            {{ Carbon\Carbon::createFromTimestamp($task->subtime)->addHour(8)->toDateTimeString() }}
                         </div>
                     </div>
                     @can("admin", new App\Model\Role)

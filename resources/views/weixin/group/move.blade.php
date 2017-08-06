@@ -5,40 +5,65 @@
 
     <div class="panel panel-default">
         <div class="panel-heading">
-            快捷方式：@can("create", new \App\Model\Role){!! link_to("wechatapigroup/create","增加微信用户组") !!} || @endcan @include("layouts.wx.wx04")
+            快捷方式：@can("create", new \App\Model\Role){!! link_to("tempjiazhang/create","增加临时家长") !!} || @endcan @include("layouts.shortcut21")
         </div>
         <div class="panel-body">
             @if (count($tasks) > 0)
+                <table border="0">
+                    <tr>
+                        <td class="col-sm-2">
+                            {{ Form::label('tomove', '移入新组') }}
+                        </td>
+                        <td class="col-sm-2">
+                            {{ Form::select('group_id', $gp, null) }}
+                        </td>
+                        <td class="col-sm-2">
+                            <button type="submit" id = "moveall" class="btn btn-warning">确定移入</button>
+                        </td>
+                    </tr>
+                </table>
                 <div class="panel panel-info">
                     <div class="panel-heading">
-                        移入微信用户组
+                        用户批量移入新组
                     </div>
                     <div class="panel-body">
-                        <div class='form-group'>
-                            {{ Form::label('tomove', '移入新用户组',['class'=>'col-sm-3 control-label']) }}
-                            <div class='col-sm-6'>
-                                {{ Form::select('group_id', $gp, null, ['class'=>'form-control']) }}
-                                <button type="submit" id = "moveall" class="btn btn-warning">确定移入</button>
-                            </div>
-                        </div>
-
                         <table class='table table-striped task-table'>
                             <thead>
                             <th><input type="checkbox" id="selall"></th>
-                            <th>序号</th>
-                            <th>名称</th>
+                            <th>昵称</th>
+                            <th>手机号</th>
+                            <th>地址</th>
+                            <th>小孩1</th>
+                            <th>小孩2</th>
+                            <th>所在组</th>
+                            <th>加入时间</th>
                             </thead>
                             <tbody>
                             @foreach ($tasks as $task)
                                 <tr>
                                     <td>
-                                        <input type="checkbox" name="tomove" value="{{ $task->id }}">
+                                        <input type="checkbox" name="tomove" value="{{ $task->openid }}">
                                     </td>
                                     <td class='table-text'>
-                                        <div>{{ $task->id }}</div>
+                                        <div>{{ $task->nickname }}</div>
                                     </td>
                                     <td class='table-text'>
-                                        <div>{{ $task->name }}</div>
+                                        <div>{{ $task->remark }}</div>
+                                    </td>
+                                    <td class='table-text'>
+                                        <div>{{ $task->address }}</div>
+                                    </td>
+                                    <td class='table-text'>
+                                        <div>{{ $task->xh1name }}</div>
+                                    </td>
+                                    <td class='table-text'>
+                                        <div>{{ $task->xh2name }}</div>
+                                    </td>
+                                    <td class='table-text'>
+                                        <div>{{ $task->group->name }}</div>
+                                    </td>
+                                    <td class='table-text'>
+                                        <div>{{ Carbon\Carbon::createFromTimestamp($task->subtime)->addHour(8)->toDateString() }}</div>
                                     </td>
                                 </tr>
                             @endforeach
@@ -70,6 +95,7 @@
                 });
 
                 $("#moveall").click(function(){
+                    var group_id = $("select[name='group_id']").val();
                     var tomove = $("input[name='tomove']");
                     var length = tomove.length;
                     var str = "";
@@ -79,19 +105,23 @@
                         }
                     }
                     str= str.substr(1);
-                    ajaxcl(str);
+                    group_id = group_id.replace('TMPPRE','');
+                    ajaxcl(str,group_id);
                 })
             });
 
-            function ajaxcl(nr) {
+            function ajaxcl(nr,gid) {
                 $.ajax({
                     url: "delsel",
                     type: "post",
                     async:false,
-                    data: { _token:'{{csrf_token()}}' , type:'yssjkkb', nr: nr },
+                    data: { _token:'{{csrf_token()}}' , type:'tomove', nr: nr, gid: gid },
                     dataType: 'text',
-                    success: function (data) {
+                    success: function (d) {
                         window.location.reload()
+                    }
+                    ,error:function (e,f) {
+                        alert(JSON.stringify(e));
                     }
                 });
             }

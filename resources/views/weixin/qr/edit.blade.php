@@ -5,24 +5,24 @@
 
     <div class="panel panel-success">
         <div class="panel-heading">
-            快捷方式：@can("create", new \App\Model\Role){!! link_to("wechatapigroup/create","增加微信用户组") !!} | @endcan {!! link_to("wechatapigroup/$task->id","微信用户组详情") !!} ||  @include("layouts.wx.wx04")
+            快捷方式：@can("create", new \App\Model\Role){!! link_to("wechatapiqr/create","增加微信二维码") !!} | @endcan {!! link_to("wechatapiqr/$task->id","微信二维码详情") !!} ||  @include("layouts.wx.wx04")
         </div>
         <div class="panel-body">
             <div class="panel panel-primary">
                 <div class="panel-heading">
-                    编辑微信用户组
+                    编辑微信二维码
                 </div>
                 <div class="panel-body">
-                    {{ Form::model($task, ["url"=>"wechatapigroup/$task->id", "method" => "PUT", "class" => "form-horizontal"]) }}
+                    {{ Form::model($task, ["url"=>"wechatapiqr/$task->id", "method" => "PUT", "class" => "form-horizontal"]) }}
                     <div class='panel panel-primary'>
                         <div class='panel-heading'>
                             必填项目
                         </div>
                         <div class='panel-body'>
                             <div class='form-group'>
-                                {{ Form::label('name', '名称',['class'=>'col-sm-3 control-label']) }}
+                                {{ Form::label('scene_str', '名称',['class'=>'col-sm-3 control-label']) }}
                                 <div class='col-sm-6'>
-                                    {{ Form::text('name', null, ['class'=>'form-control']) }}
+                                    {{ Form::text('scene_str', null, ['class'=>'form-control']) }}
                                 </div>
                             </div>
                         </div>

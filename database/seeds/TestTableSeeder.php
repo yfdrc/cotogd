@@ -11,33 +11,33 @@ class TestTableSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('kechengs')->insert([
-            'dianpu_id' => '2',
-            'name' => '缺省',
-            'ageMin' => '1',
-            'ageMax' => '80',
-            'quanZhong' => 1,
-        ]);
-        DB::table('kechengs')->insert([
-            'dianpu_id' => '3',
-            'name' => '缺省',
-            'ageMin' => '1',
-            'ageMax' => '80',
-            'quanZhong' => 1,
-        ]);
+//        DB::table('kechengs')->insert([
+//            'dianpu_id' => '2',
+//            'name' => '缺省',
+//            'ageMin' => '1',
+//            'ageMax' => '80',
+//            'quanZhong' => 1,
+//        ]);
+//        DB::table('kechengs')->insert([
+//            'dianpu_id' => '3',
+//            'name' => '缺省',
+//            'ageMin' => '1',
+//            'ageMax' => '80',
+//            'quanZhong' => 1,
+//        ]);
 
-        DB::table('yonggongs')->insert([
-            'dianpu_id' => '1',
-            'name' => '曾凤',
-            'tele' => '138******646',
-            'job' => '管理员',
-        ]);
-        DB::table('yonggongs')->insert([
-            'dianpu_id' => '2',
-            'name' => 'Tina',
-            'tele' => '138******646',
-            'job' => '店长',
-        ]);
+//        DB::table('yonggongs')->insert([
+//            'dianpu_id' => '1',
+//            'name' => '曾凤',
+//            'tele' => '138******646',
+//            'job' => '管理员',
+//        ]);
+//        DB::table('yonggongs')->insert([
+//            'dianpu_id' => '2',
+//            'name' => 'Tina',
+//            'tele' => '138******646',
+//            'job' => '店长',
+//        ]);
 
 
 //        DB::table('jiazhangs')->insert([

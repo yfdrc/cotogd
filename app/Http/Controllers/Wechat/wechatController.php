@@ -9,6 +9,8 @@
 namespace App\Http\Controllers\Wechat;
 
 use App\Http\Controllers\Controller;
+use App\Model\Wxgroup;
+use App\Model\Wxuser;
 use Carbon\Carbon;
 use EasyWeChat\Message\Location;
 use EasyWeChat\Support\Log;
@@ -20,18 +22,52 @@ class wechatController extends Controller
         $wechat = app('wechat');
 
         $wechat->server->setMessageHandler(function($message){
-//        $message->ToUserName    接收方帐号（该公众号 ID）
-//        $message->FromUserName  发送方帐号（OpenID, 代表用户的唯一标识）
-//        $message->CreateTime    消息创建时间（时间戳）
-//        $message->MsgId         消息 ID（64位整型）
             switch ($message->MsgType) {
                 case 'event':
                     switch ($message->Event){
                         case 'subscribe':
-                            //{"ToUserName":"gh_f21725d36b7c","FromUserName":"o4zG9wY6IC_d-AGw_iZEeF3OlFhw","CreateTime":"1501775822","MsgType":"event","Event":"subscribe","EventKey":null}
+                            //{"ToUserName":"gh_f21725d36b7c",
+                            //"FromUserName":"o4zG9wY6IC_d-AGw_iZEeF3OlFhw",
+                             //"CreateTime":"1501775822",
+                            //"MsgType":"event",
+                            //"Event":"subscribe",
+                            //"EventKey":null}
+                            try {
+                                $wechat = app('wechat');
+                                $userService = $wechat->user;
+                                $item = $message->FromUserName;
+                                if( !Wxuser::find($item) ){
+                                    $user = $userService->get($item);
+                                    $wxuser['nickname'] = $user->nickname;
+                                    $wxuser['remark'] = $user->remark;
+                                    $wxuser['address'] = $user->province . $user->city;
+                                    $wxuser['group_id'] = $user->groupid;
+                                    $wxuser['subtime'] = $user->subscribe_time;
+                                    $wxuser['openid'] = $item;
+                                    Wxuser::create($wxuser);
+                                    $gr = Wxgroup::find(0); $gr->count +=1; $gr->save();
+                                }
+                            }catch (\Exception $ex)
+                            {
+                                Log::error($ex);
+                            }
                             break;
                         case 'unsubscribe':
-                            //{"ToUserName":"gh_f21725d36b7c","FromUserName":"o4zG9wY6IC_d-AGw_iZEeF3OlFhw","CreateTime":"1501775503","MsgType":"event","Event":"unsubscribe","EventKey":null}
+                            //{"ToUserName":"gh_f21725d36b7c",
+                            //"FromUserName":"o4zG9wY6IC_d-AGw_iZEeF3OlFhw",
+                            //"CreateTime":"1501775503",
+                            //"MsgType":"event",
+                            //"Event":"unsubscribe",
+                            //"EventKey":null}
+                            try {
+                                $item = $message->FromUserName;
+                                $wxuser=Wxuser::find($item);
+                                $gr = Wxgroup::find($wxuser->group_id); $gr->count +=-1; $gr->save();
+                                $wxuser->delete();
+                            }catch (\Exception $ex)
+                            {
+                                Log::error($ex);
+                            }
                             break;
                         case 'CLICK':
                             //{"ToUserName":"gh_f21725d36b7c","FromUserName":"o4zG9wY6IC_d-AGw_iZEeF3OlFhw","CreateTime":"1501776202","MsgType":"event","Event":"CLICK","EventKey":"V1002_TJ"}
@@ -40,7 +76,13 @@ class wechatController extends Controller
                             //{"ToUserName":"gh_f21725d36b7c","FromUserName":"o4zG9wY6IC_d-AGw_iZEeF3OlFhw","CreateTime":"1501776210","MsgType":"event","Event":"VIEW","EventKey":"http://112.74.161.57/cotogd/example","MenuId":"424658939"}
                             break;
                         case 'SCAN':
-                            //{"ToUserName":"gh_f21725d36b7c","FromUserName":"o4zG9wY6IC_d-AGw_iZEeF3OlFhw","CreateTime":"1501779805","MsgType":"event","Event":"SCAN","EventKey":"drc","Ticket":"gQHo8DwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAyZ0dXbWQ4ek5lWjExMDAwMDAwN0EAAgSaQn1ZAwQAAAAA"}
+                            //{"ToUserName":"gh_f21725d36b7c",
+                            //"FromUserName":"o4zG9wY6IC_d-AGw_iZEeF3OlFhw",
+                            //"CreateTime":"1501779805",
+                            //"MsgType":"event",
+                            //"Event":"SCAN",
+                            //"EventKey":"drc",
+                            //"Ticket":"gQHo8DwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAyZ0dXbWQ4ek5lWjExMDAwMDAwN0EAAgSaQn1ZAwQAAAAA"}
                             break;
                         case 'scancode_waitmsg':
                             //{"ToUserName":"gh_f21725d36b7c","FromUserName":"o4zG9wY6IC_d-AGw_iZEeF3OlFhw","CreateTime":"1501778410","MsgType":"event","Event":"scancode_waitmsg","EventKey":"rselfmenu_0_0","ScanCodeInfo":{"ScanType":"qrcode","ScanResult":"http://weixin.qq.com/r/NTrt9WfEtjrJrSOW928n"}}

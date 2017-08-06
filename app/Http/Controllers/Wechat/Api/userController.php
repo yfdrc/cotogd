@@ -10,6 +10,7 @@ namespace App\Http\Controllers\Wechat\Api;
 
 use App\Http\Controllers\Controller;
 use App\Model\Role;
+use App\Model\Wxgroup;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use App\Model\Wxuser;
@@ -46,7 +47,7 @@ class userController extends Controller
                     $wxuser['nickname'] = $user->nickname;
                     $wxuser['remark'] = $user->remark;
                     $wxuser['address'] = $user->province . $user->city;
-                    $wxuser['groupid'] = $user->groupid;
+                    $wxuser['group_id'] = $user->groupid;
                     $wxuser['subtime'] = $user->subscribe_time;
                     $wxuser['openid'] = $item;
                     Wxuser::create($wxuser);
@@ -56,7 +57,7 @@ class userController extends Controller
         {
             $userlists = "错误：$ex";
         }
-        return view('weixin.user.create', ['ts' => '增加微信用户：' . $userlists]);
+        return view('weixin.user.create', ['ts' => '一次性写入微信用户：' . $userlists]);
     }
     public function store(Request $request)
     {
@@ -70,18 +71,32 @@ class userController extends Controller
 
     public function edit($id)
     {
+        $fhz = drc_selectidname('wxgroups');
         $model = Wxuser::findOrFail($id);
         if(auth()->user()->can('update',new Role)) {
-            return view('weixin.user.edit',['task' => $model]);
+            return view('weixin.user.edit',['task' => $model, 'gp'=>$fhz]);
         }
         return redirect(url('wechatapiuser'))->withErrors(['你没有编辑权限。']);
     }
 
     public function update(Request $request, $id)
     {
+        $input = $request->all();
+        $input['group_id'] = drc_selectremoveidpre($request['group_id']);
         $model = Wxuser::findOrFail($id);
         $this->validate($request, [ 'remark' => 'required']);
-        $input = $request->all();
+        if($input['remark']!=$model['remark']){
+            $wechat = app('wechat');
+            $userService = $wechat->user;
+            $userService->remark($id, $input['remark']);
+        }
+        if($input['group_id']!=$model['group_id']){
+            $gr = Wxgroup::find($input['group_id']); $gr->count +=1; $gr->save();
+            $gr = Wxgroup::find($model['group_id']); $gr->count +=-1; $gr->save();
+            $wechat = app('wechat');
+            $groupService = $wechat->user_group;
+            $groupService->moveUser($id, $input['group_id']);
+        }
         $model->fill($input)->save();
         return redirect(url('wechatapiuser'));
     }
