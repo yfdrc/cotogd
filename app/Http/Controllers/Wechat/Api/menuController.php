@@ -65,20 +65,20 @@ class menuController extends Controller
                 ],
             ],
             [
-                "name"=> "扫码拍照",
+                "name"=> "扫一扫我",
                 "sub_button"=> [
-//                    [
-//                        "type"=> "scancode_waitmsg",
-//                        "name"=> "扫码带提示",
-//                        "key"=> "rselfmenu_0_0",
-//                        "sub_button"=> [ ]
-//                    ],
                     [
                         "type"=> "scancode_push",
                         "name"=> "上课扫码",
                         "key"=> "rselfmenu_0_1",
                         "sub_button"=> [ ]
                     ],
+//                    [
+//                        "type"=> "scancode_waitmsg",
+//                        "name"=> "扫码带提示",
+//                        "key"=> "rselfmenu_0_0",
+//                        "sub_button"=> [ ]
+//                    ],
 //                    [
 //                        "type"=> "pic_sysphoto",
 //                        "name"=> "系统拍照发图",
@@ -100,15 +100,35 @@ class menuController extends Controller
                 ]
             ],
             [
-                "name"=> "上报资料",
+                "name"=> "我的信息",
                 "sub_button"=> [
                     [
-                        "type"=> "location_select",
-                        "name"=> "上报位置",
-                        "key"=> "telllaca"
-                    ]
+                        "type" => "click",
+                        "name" => "获取家长信息",
+                        "key"  => "myinfo_jz"
+                    ],
+                    [
+                        "type" => "click",
+                        "name" => "获取小孩信息",
+                        "key"  => "myinfo_xy"
+                    ],
+                    [
+                        "type" => "click",
+                        "name" => "获取课程喜好",
+                        "key"  => "myinfo_study"
+                    ],
                 ]
-            ]
+            ],
+//            [
+//                "name"=> "上报资料",
+//                "sub_button"=> [
+//                    [
+//                        "type"=> "location_select",
+//                        "name"=> "上报位置",
+//                        "key"=> "telllaca"
+//                    ]
+//                ]
+//            ]
         ];
         $txt = $menu->add($buttons);
         return view('weixin.menu', ['ts' => '新建菜单：'.$txt]);

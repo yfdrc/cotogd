@@ -20,6 +20,7 @@
                             <th>手机号</th>
                             <th>地址</th>
                             <th>所在组</th>
+                            <th>课程喜好</th>
                             <th>最近上课</th>
                             <th>加入时间</th>
                             <th></th>
@@ -38,6 +39,9 @@
                                     </td>
                                     <td class='table-text'>
                                         <div>{{ $task->group->name }}</div>
+                                    </td>
+                                    <td class='table-text'>
+                                        <div>{{ $task->study }}</div>
                                     </td>
                                     <td class='table-text'>
                                         <div>{{ $task->scantime==0?'':Carbon\Carbon::createFromTimestamp($task->scantime)->addHour(8)->toDateString() }}</div>

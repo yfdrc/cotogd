@@ -43,8 +43,7 @@ class wechatController extends Controller
                             //"ScanCodeInfo":{"ScanType":"qrcode","ScanResult":"http://weixin.qq.com/r/NTrt9WfEtjrJrSOW928n"}}
                             break;
                         case 'CLICK':
-                            //"Event":"CLICK","
-                            //EventKey":"V1002_TJ"}
+                            return $this->Eventclick($message);
                             break;
                         case 'VIEW':
                             //"Event":"VIEW",
@@ -107,61 +106,105 @@ class wechatController extends Controller
         return $wechat->server->serve();
     }
 
+    private function Eventclick($message){
+        //"Event":"CLICK","
+        //EventKey":"V1002_TJ"}
+        try {
+            $from = $message->FromUserName;
+            $ekey = $message->EventKey;
+            $ekey = strtoupper($ekey);
+            switch (substr($ekey, 0, 7)) {
+                case 'MYINFO_':
+                    $wuser = Wxuser::find($from);
+                    $jz = Jiazhang::where('tele', $wuser->remark)->first();
+                    if(empty($jz)) {
+                        return '温馨提醒：您的信息系统还没有登记';
+                    } else {
+                        $ekey = str_replace('MYINFO_', '', $ekey);
+                        switch (strtoupper($ekey)) {
+                            case 'JZ':
+                                $jzname = $jz['name'];
+                                $jztele = $jz['tele'];
+                                $jzaddr = $jz['hAddress'];
+                                $whenstud = $jz['whenStud'];
+                                $leftks = $jz['leftKeshi'];
+                                $xx = "家长信息：剩余课时更新有迟缓\n姓名：$jzname\n电话：$jztele\n住址：$jzaddr\n上课安排：$whenstud\n剩余课时：$leftks";
+                                return $xx;
+                                break;
+                            case 'XY':
+                                break;
+                            case 'STUDY':
+                                break;
+                            default:
+                                return '错误提示：您发送了系统不认识的命令。';
+                                break;
+                        }
+                    }
+                    break;
+
+                default :
+                    return '';
+                    break;
+            }
+        } catch (\Exception $ex)
+        {
+            Log::error($ex);
+        }
+    }
+
     private function Msgtext($message){
         //"Content":"123456",
         //"MsgId":"6450084673267708053"}
-        $from = $message->FromUserName;
-        $content = $message->Content;
-        switch (strtoupper(substr($content,0,4))){
-            case 'GGXY':
-                $content = str_replace('+','',$content);
-                $xyidgg = substr($content,4, strlen($content) - 4);
-                if (is_numeric($xyidgg)){
-                    $wuser = Wxuser::find($from);
-                    $todo = str_getcsv($wuser->todo,';');
-                    if(count($todo) < 5){
-                        return '错误提醒：系统没有查找到你需要更改上课学号。';
-                    }else{
-                        $xyidold = $todo[1];
-                        $studytime = $todo[2];
-                        if(str_contains(','.$todo[0].',',','.$xyidgg.',')){
-                            if($xyidgg==$xyidold){
-                                return '错误提醒：您回复的学号为默认值。';
-                            } else {
-                                $kouke['dianpu_id'] = $todo[3];
-                                $kouke['kecheng_id'] = $todo[4];
-                                $kouke['xueyuan_id'] = $xyidgg;
-                                if($this->Isshangke($kouke['dianpu_id'], $kouke['xueyuan_id'], $studytime)) {
-                                    return '错误信息：您回复的学号正在上课。';
-                                } else {
-                                    $this->addkouke($kouke, $studytime, $xyidold);
-                                    $wuser->update(['todo' => '']);
-                                    $this->addstudy($wuser, Xueyuan::find($kouke['xueyuan_id'])->name, Kecheng::find($kouke['kecheng_id'])->name);
-                                    return '上课信息提醒：您的回复的已经处理。';
-                                }
-                            }
+        try {
+            $from = $message->FromUserName;
+            $content = $message->Content;
+            switch (strtoupper(substr($content, 0, 4))) {
+                case 'GGXY':
+                    $content = str_replace('+', '', $content);
+                    $xyidgg = substr($content, 4, strlen($content) - 4);
+                    if (is_numeric($xyidgg)) {
+                        $wuser = Wxuser::find($from);
+                        $todo = str_getcsv($wuser->todo, ';');
+                        if (count($todo) < 5) {
+                            return '错误提醒：系统没有查找到你需要更改上课学号。';
                         } else {
-                            return '错误提醒：您回复的学号不正确。';
+                            $xyidold = $todo[1];
+                            $studytime = $todo[2];
+                            if (str_contains(',' . $todo[0] . ',', ',' . $xyidgg . ',')) {
+                                if ($xyidgg == $xyidold) {
+                                    return '错误提醒：您回复的学号为默认值。';
+                                } else {
+                                    $kouke['dianpu_id'] = $todo[3];
+                                    $kouke['kecheng_id'] = $todo[4];
+                                    $kouke['xueyuan_id'] = $xyidgg;
+                                    if ($this->Isshangke($kouke['dianpu_id'], $kouke['xueyuan_id'], $studytime)) {
+                                        return '错误信息：您回复的学号正在上课。';
+                                    } else {
+                                        $this->addkouke($kouke, $studytime, $xyidold);
+                                        $wuser->update(['todo' => '']);
+                                        $this->addstudy($wuser, Xueyuan::find($kouke['xueyuan_id'])->name, Kecheng::find($kouke['kecheng_id'])->name);
+                                        $kcname = Kecheng::find($kouke['kecheng_id'])->name;
+                                        $skxy = Xueyuan::find($xyidold)->name . "=>" . Xueyuan::find($xyidgg)->name;
+                                        return "上课信息：您的回复已经处理\n上课时间:$studytime\n课程名称：$kcname\n上课小朋友：$skxy";
+                                    }
+                                }
+                            } else {
+                                return '错误提醒：您回复的学号不正确。';
+                            }
                         }
+                    } else {
+                        return '错误提醒：您回复的学号必须为数字。';
                     }
-                } else {
-                    return '错误提醒：您回复的学号必须为数字。';
-                }
-                break;
-        }
-        return 'error';
-    }
+                    break;
 
-    private function Isshangke($dianpu_id, $xueyuan_id, $sktime){
-        $fhz = false;
-        $kks = Kouke::where([['dianpu_id', $dianpu_id], ['xueyuan_id', $xueyuan_id]])->get();
-        foreach ($kks as $kk){
-            if(str_contains($kk['studTime'],$sktime)){
-                $fhz = true;
-                break;
+                default :
+                    return '温馨提醒：您的回复系统不认识。';
+                    break;
             }
+        } catch (\Exception $ex)
+        {
+            Log::error($ex);
         }
-        return $fhz;
     }
 
     private function Eventscan($message){
@@ -200,16 +243,17 @@ class wechatController extends Controller
                     if (empty($xyidarr) ) {
                         return "错误信息：你的小朋友都在上课。";
                     } else {
+                        $xyxx = substr($xyxx, 0, strlen($xyxx)-1) . '。';
                         if (count($xyidarr) > 1) {
                             $xyname = $xynamearr[0];
                             $kouke['xueyuan_id'] = $xyidarr[0];
                             $wstudyarr = str_getcsv($wuser->study, ';');
                             if ($wstudyarr[0]) {
-                                for ($i = 0; $i++; $i < count($wstudyarr)) {
-                                    $remarr = str_getcsv($wstudyarr[$i]);
-                                    if (str_contains($remarr[1], $kcname)) {
-                                        $xyidtmp = Xueyuan::where('name', $remarr[0])->first()->id;
-                                        $xyname = $remarr[0];
+                                for ($i = 0; $i < count($wstudyarr); $i++) {
+                                    $xykcarr = str_getcsv($wstudyarr[$i]);
+                                    if ($xykcarr[1]== $kcname) {
+                                        $xyidtmp = Xueyuan::where('name', $xykcarr[0])->first()->id;
+                                        $xyname = $xykcarr[0];
                                         $kouke['xueyuan_id'] = $xyidtmp;
                                         break;
                                     }
@@ -218,22 +262,36 @@ class wechatController extends Controller
                             $this->addkouke($kouke, $sktime);
                             $this->addstudy($wuser, $xyname, $kcname);
                             $wuser->update(['todo' => implode(',', $xyidarr) . ";" . $kouke['xueyuan_id'] . ";$sktime;" . $kouke['dianpu_id'] . ";" . $kouke['kecheng_id']]);
-                            return "上课信息：小孩为" . $xyname . "，课程为" . $kcname . "，时间为" . $sktime . "。请注意，" . $xyxx . "如果上课小孩不对，请回复：GGXY+学号。";
+                            return "上课信息：您还有小朋友没来上课\n上课时间：$sktime\n课程名称：$kcname\n上课小朋友：$xyname" . "\n温馨提示,$xyxx" . "如果上课小孩与实际不一致，请回复：GGXY+学号。";
                         } else {  //只有一个小朋友空闲
                             $xyname = $xynamearr[0];
                             $kouke['xueyuan_id'] = $xyidarr[0];
                             $this->addkouke($kouke, $sktime);
                             $this->addstudy($wuser, $xyname, $kcname);
                             $wuser->update(['todo' => '']);
-                            return "上课信息：小孩为" . $xyname . "，课程为" . $kcname . "，时间为" . $sktime . "。";
+                            return "上课信息：您的小朋友都在上课\n上课时间：$sktime\n课程名称：$kcname\n上课小朋友：$xyname";
                         }
                     }
                 } else {
-                    return "上课信息：没有找到小孩信息，请与工作人员联系。";
+                    return "错误信息：没有找到小孩信息，请与工作人员联系。";
                 }
             } else {
-                return "上课信息：没有找到家长信息，请与工作人员联系。";
+                return "错误信息：没有找到家长信息，请与工作人员联系。";
             }
+        }catch (\Exception $ex)
+        {
+            Log::error($ex);
+        }
+    }
+
+    private function Eventunsubscribe($message){
+        //"Event":"unsubscribe",
+        //"EventKey":null}
+        try {
+            $from = $message->FromUserName;
+            $wxuser=Wxuser::find($from);
+            $gr = Wxgroup::find($wxuser->group_id); $gr->count +=-1; $gr->save();
+            $wxuser->delete();
         }catch (\Exception $ex)
         {
             Log::error($ex);
@@ -246,36 +304,35 @@ class wechatController extends Controller
         try {
             $wechat = app('wechat');
             $userService = $wechat->user;
-            $item = $message->FromUserName;
-            if( !Wxuser::find($item) ){
-                $user = $userService->get($item);
+            $from = $message->FromUserName;
+            if( !Wxuser::find($from) ){
+                $user = $userService->get($from);
                 $wxuser['nickname'] = $user->nickname;
                 $wxuser['remark'] = $user->remark;
                 $wxuser['address'] = $user->province . $user->city;
                 $wxuser['group_id'] = $user->groupid;
                 $wxuser['subtime'] = $user->subscribe_time;
-                $wxuser['openid'] = $item;
+                $wxuser['openid'] = $from;
                 Wxuser::create($wxuser);
                 $gr = Wxgroup::find(0); $gr->count +=1; $gr->save();
             }
+            return '感谢您的关注。';
         }catch (\Exception $ex)
         {
             Log::error($ex);
         }
     }
 
-    private function Eventunsubscribe($message){
-        //"Event":"unsubscribe",
-        //"EventKey":null}
-        try {
-            $item = $message->FromUserName;
-            $wxuser=Wxuser::find($item);
-            $gr = Wxgroup::find($wxuser->group_id); $gr->count +=-1; $gr->save();
-            $wxuser->delete();
-        }catch (\Exception $ex)
-        {
-            Log::error($ex);
+    private function Isshangke($dianpu_id, $xueyuan_id, $sktime){
+        $fhz = false;
+        $kks = Kouke::where([['dianpu_id', $dianpu_id], ['xueyuan_id', $xueyuan_id]])->get();
+        foreach ($kks as $kk){
+            if(str_contains($kk['studTime'],$sktime)){
+                $fhz = true;
+                break;
+            }
         }
+        return $fhz;
     }
 
     private  function addkouke($kouke, $newsktime, $removeid = 0){

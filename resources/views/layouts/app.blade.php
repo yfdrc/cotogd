@@ -45,6 +45,18 @@
                 {{--</ul>--}}
                 {{--</li>--}}
                 <li class="dropdown">
+                    <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">微信管理<b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li>{!! link_to("wechatapigroup","微信用户组") !!}</li>
+                        <li>{!! link_to("wechatapiuser","微信用户") !!}</li>
+                        <li>{!! link_to("wechatapiqr","微信二维码") !!}</li>
+                        {{--<li>{!! link_to("wechatshow?fname=wx01&bt=自定义菜单","自定义菜单") !!}</li>--}}
+                        {{--<li>{!! link_to("wechatshow?fname=wx02&bt=群发内容","群发内容") !!}</li>--}}
+                        {{--<li>{!! link_to("wechatshow?fname=wx03&bt=发送模版","发送模版") !!}</li>--}}
+                        {{--<li>{!! link_to("wechatshow?fname=wx06&bt=用户标签管理","用户标签管理") !!}</li>--}}
+                    </ul>
+                </li>
+                <li class="dropdown">
                     <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">原始数据<b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         {{--                        <li>{!! link_to("createform","用于开发-生成代码") !!}</li>--}}
@@ -81,18 +93,6 @@
                         <li>{!! link_to("xueyuan","学员列表") !!}</li>
                         <li>{!! link_to("xieyi","协议列表") !!}</li>
                         <li>{!! link_to("kouke","扣课列表") !!}</li>
-                    </ul>
-                </li>
-                <li class="dropdown">
-                    <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">微信管理<b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                        <li>{!! link_to("wechatapigroup","微信用户组") !!}</li>
-                        <li>{!! link_to("wechatapiuser","微信用户") !!}</li>
-                        <li>{!! link_to("wechatapiqr","微信二维码") !!}</li>
-                        {{--<li>{!! link_to("wechatshow?fname=wx01&bt=自定义菜单","自定义菜单") !!}</li>--}}
-                        {{--<li>{!! link_to("wechatshow?fname=wx02&bt=群发内容","群发内容") !!}</li>--}}
-                        {{--<li>{!! link_to("wechatshow?fname=wx03&bt=发送模版","发送模版") !!}</li>--}}
-                        {{--<li>{!! link_to("wechatshow?fname=wx06&bt=用户标签管理","用户标签管理") !!}</li>--}}
                     </ul>
                 </li>
                 <li class="dropdown">
