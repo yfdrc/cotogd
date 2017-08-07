@@ -257,7 +257,7 @@ class Drc implements DrcContract
                         if ($xieyshu > $i) {
                             $row['htbh'] = $xieyis[$i]['name'];
                             $row['htsm'] = $xieyis[$i]['name'];
-                            if (str_contains('短', $xieyis[$i]['name']) or str_contains('寒', $xieyis[$i]['name']) or str_contains('暑', $xieyis[$i]['name'])) {
+                            if (str_contains($xieyis[$i]['name'], '短') or str_contains($xieyis[$i]['name'], '寒') or str_contains($xieyis[$i]['name'], '暑')) {
                                 $row['htds'] = $xieyis[$i]['ksZw'] + $xieyis[$i]['ksYw'];
                                 $row['htzw'] = 0;
                                 $row['htyw'] = 0;

@@ -122,18 +122,23 @@ class wechatController extends Controller
                     if(count($todo) < 5){
                         return '错误提醒：系统没有查找到你需要更改上课学号。';
                     }else{
-                        $allxy = str_getcsv($todo[0]);
                         $xyidold = $todo[1];
                         $studytime = $todo[2];
-                        if(str_contains($xyidgg,$allxy)){
+                        if(str_contains(','.$todo[0].',',','.$xyidgg.',')){
                             if($xyidgg==$xyidold){
                                 return '错误提醒：您回复的学号为默认值。';
                             } else {
                                 $kouke['dianpu_id'] = $todo[3];
                                 $kouke['kecheng_id'] = $todo[4];
                                 $kouke['xueyuan_id'] = $xyidgg;
-                                $this->addkouke($kouke, $studytime, $xyidold);
-                                $wuser->update(['todo'=>'']);
+                                if($this->Isshangke($kouke['dianpu_id'], $kouke['xueyuan_id'], $studytime)) {
+                                    return '错误信息：您回复的学号正在上课。';
+                                } else {
+                                    $this->addkouke($kouke, $studytime, $xyidold);
+                                    $wuser->update(['todo' => '']);
+                                    $this->addremember($wuser, Xueyuan::find($kouke['xueyuan_id'])->name, Kecheng::find($kouke['kecheng_id'])->name);
+                                    return '上课信息提醒：您的回复的已经处理。';
+                                }
                             }
                         } else {
                             return '错误提醒：您回复的学号不正确。';
@@ -145,6 +150,18 @@ class wechatController extends Controller
                 break;
         }
         return 'error';
+    }
+
+    private function Isshangke($dianpu_id, $xueyuan_id, $sktime){
+        $fhz = false;
+        $kks = Kouke::where([['dianpu_id', $dianpu_id], ['xueyuan_id', $xueyuan_id]])->get();
+        foreach ($kks as $kk){
+            if(str_contains($kk['studTime'],$sktime)){
+                $fhz = true;
+                break;
+            }
+        }
+        return $fhz;
     }
 
     private function Eventscan($message){
@@ -182,33 +199,34 @@ class wechatController extends Controller
                         $xyname = $xynamearr[0];
                         $kouke['xueyuan_id'] = $xyidarr[0];
                         $wstudyarr = str_getcsv($wuser->study, ';');
-                        for($i=0; $i++; $i<count($wstudyarr )) {
-                            $remarr = str_getcsv($wstudyarr[$i]);
-                            if (str_contains($kcname, $remarr[1])) {
-                                $xyidtmp = Xueyuan::where('name',$remarr[0])->first()->id;
-                                $kk = Kouke::where([['dianpu_id', $kouke['dianpu_id']], ['xueyuan_id', $xyidtmp], ['kecheng_id', $kouke['kecheng_id']]])->first();
-                                if(!$kk) {
-                                    $xyname = $remarr[0];
-                                    $kouke['xueyuan_id'] = $xyidtmp;
-                                    break;
+                        if($wstudyarr[0]) {
+                            for ($i = 0; $i++; $i < count($wstudyarr)) {
+                                $remarr = str_getcsv($wstudyarr[$i]);
+                                if (str_contains($remarr[1], $kcname)) {
+                                    $xyidtmp = Xueyuan::where('name', $remarr[0])->first()->id;
+                                    if (!$this->Isshangke($kouke['dianpu_id'], $kouke['xueyuan_id'], $sktime)) {
+                                        $xyname = $remarr[0];
+                                        $kouke['xueyuan_id'] = $xyidtmp;
+                                        break;
+                                    }
                                 }
                             }
                         }
                         $fhz1 = $this->addkouke($kouke, $sktime);
-                        addremember($wuser, $xyname, $kcname);
                         if ($fhz1) {    //第一学员已有本次上课信息
-                            if($xyname == $xynamearr[1]) {
-                                $xyname = $xynamearr[0];
-                                $kouke['xueyuan_id'] = $xyidarr[0];
-                            } else {
-                                $xyname = $xynamearr[1];
-                                $kouke['xueyuan_id'] = $xyidarr[1];
+                            for ($i = 0; $i++; $i < count($xyidarr)) {
+                                if (!$this->Isshangke($kouke['dianpu_id'], $xyidarr[$i], $sktime)) {
+                                    $xyname = $xynamearr[$i];
+                                    $kouke['xueyuan_id'] = $xyidarr[$i];
+                                }
                             }
                             $fhz2 = $this->addkouke($kouke, $sktime);
-                            addremember($wuser, $xyname, $kcname);
+                            $this->addremember($wuser, $xyname, $kcname);
+                            $wuser->update(['todo'=>'']);
                             if ($fhz2) { return "上课信息：同一家长同一时段同一课程系统最多允许两个小朋友上课，请你不要重复扫码。"; }
                             return "上课信息：小孩为" . $xyname . "，课程为" . $kcname . "，时间为" . $sktime . "。";
                         } else {
+                            $this->addremember($wuser, $xyname, $kcname);
                             $todonr = implode(',',$xyidarr) . ";" . $kouke['xueyuan_id'] . ";$sktime;" . $kouke['dianpu_id'] . ";" . $kouke['kecheng_id'];
                             $wuser->update(['todo'=>$todonr]);
                         }
@@ -302,9 +320,11 @@ class wechatController extends Controller
 
     private  function addremember($wuser, $xyname, $kcname){
         $study = '';
-        $wstudyarr = str_getcsv($wuser->study, ';');
+        $wstudy = $wuser->study;
+        if (!str_contains($wstudy, $xyname)){ $wstudy = $wstudy . "$xyname,$kcname;"; }
+        $wstudyarr = str_getcsv($wstudy, ';');
         foreach ($wstudyarr as $item){
-            if ( str_contains($xyname, $item)){
+            if ( str_contains($item, $xyname)){
                 $study = $study . "$xyname,$kcname;";
             } else {
                 $study = $study . $item . ';';
