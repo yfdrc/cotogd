@@ -179,14 +179,19 @@ class wechatController extends Controller
                             array_push($xynamearr, $xy['name']);
                             $xyxx = $xyxx . $xy['name'] . '学号为' . $xy['id'] . ';';
                         }
+                        $xyname = $xynamearr[0];
+                        $kouke['xueyuan_id'] = $xyidarr[0];
                         $wstudyarr = str_getcsv($wuser->study, ';');
-                        foreach ($wstudyarr as $wstudy) {
-                            if (str_contains($kcname, $wstudy)) {
-
-                            }
-                            else {
-                                $xyname = $xynamearr[0];
-                                $kouke['xueyuan_id'] = $xyidarr[0];
+                        for($i=0; $i++; $i<count($wstudyarr )) {
+                            $remarr = str_getcsv($wstudyarr[$i]);
+                            if (str_contains($kcname, $remarr[1])) {
+                                $xyidtmp = Xueyuan::where('name',$remarr[0])->first()->id;
+                                $kk = Kouke::where([['dianpu_id', $kouke['dianpu_id']], ['xueyuan_id', $xyidtmp], ['kecheng_id', $kouke['kecheng_id']]])->first();
+                                if(!$kk) {
+                                    $xyname = $remarr[0];
+                                    $kouke['xueyuan_id'] = $xyidtmp;
+                                    break;
+                                }
                             }
                         }
                         $fhz1 = $this->addkouke($kouke, $sktime);
@@ -209,103 +214,103 @@ class wechatController extends Controller
                         }
                         return "上课信息：小孩为" . $xyname . "，课程为" . $kcname . "，时间为" . $sktime . "。请注意，" . $xyxx . "如果上课小孩不对，请回复：GGXY+学号。";
                     } else {  //只有一个小朋友
-                    $xyname = $xys->first()->name;
-                    $kouke['xueyuan_id'] = $xys->first()->id;
-                    $fhz3 = $this->addkouke($kouke, $sktime);
-                    if ($fhz3) { return "上课信息：系统只登记了一个小朋友资料，请你不要重复扫码。"; }
-                    return "上课信息：小孩为" . $xyname . "，课程为" . $kcname . "，时间为" . $sktime . "。";
+                        $xyname = $xys->first()->name;
+                        $kouke['xueyuan_id'] = $xys->first()->id;
+                        $fhz3 = $this->addkouke($kouke, $sktime);
+                        if ($fhz3) { return "上课信息：系统只登记了一个小朋友资料，请你不要重复扫码。"; }
+                        return "上课信息：小孩为" . $xyname . "，课程为" . $kcname . "，时间为" . $sktime . "。";
+                    }
+                } else {
+                    return "上课信息：没有找到小孩信息，请与工作人员联系。";
                 }
             } else {
-                return "上课信息：没有找到小孩信息，请与工作人员联系。";
+                return "上课信息：没有找到家长信息，请与工作人员联系。";
             }
-        } else {
-            return "上课信息：没有找到家长信息，请与工作人员联系。";
-        }
         }catch (\Exception $ex)
-{
-Log::error($ex);
-}
-}
-
-private function Eventsubscribe($message){
-    //"Event":"subscribe",
-    //"EventKey":null}
-    try {
-        $wechat = app('wechat');
-        $userService = $wechat->user;
-        $item = $message->FromUserName;
-        if( !Wxuser::find($item) ){
-            $user = $userService->get($item);
-            $wxuser['nickname'] = $user->nickname;
-            $wxuser['remark'] = $user->remark;
-            $wxuser['address'] = $user->province . $user->city;
-            $wxuser['group_id'] = $user->groupid;
-            $wxuser['subtime'] = $user->subscribe_time;
-            $wxuser['openid'] = $item;
-            Wxuser::create($wxuser);
-            $gr = Wxgroup::find(0); $gr->count +=1; $gr->save();
+        {
+            Log::error($ex);
         }
-    }catch (\Exception $ex)
-    {
-        Log::error($ex);
     }
-}
 
-private function Eventunsubscribe($message){
-    //"Event":"unsubscribe",
-    //"EventKey":null}
-    try {
-        $item = $message->FromUserName;
-        $wxuser=Wxuser::find($item);
-        $gr = Wxgroup::find($wxuser->group_id); $gr->count +=-1; $gr->save();
-        $wxuser->delete();
-    }catch (\Exception $ex)
-    {
-        Log::error($ex);
+    private function Eventsubscribe($message){
+        //"Event":"subscribe",
+        //"EventKey":null}
+        try {
+            $wechat = app('wechat');
+            $userService = $wechat->user;
+            $item = $message->FromUserName;
+            if( !Wxuser::find($item) ){
+                $user = $userService->get($item);
+                $wxuser['nickname'] = $user->nickname;
+                $wxuser['remark'] = $user->remark;
+                $wxuser['address'] = $user->province . $user->city;
+                $wxuser['group_id'] = $user->groupid;
+                $wxuser['subtime'] = $user->subscribe_time;
+                $wxuser['openid'] = $item;
+                Wxuser::create($wxuser);
+                $gr = Wxgroup::find(0); $gr->count +=1; $gr->save();
+            }
+        }catch (\Exception $ex)
+        {
+            Log::error($ex);
+        }
     }
-}
 
-private  function addkouke($kouke, $newsktime, $removeid = 0){
-    $fhz = 0;
-    $kk = Kouke::where([['dianpu_id', $kouke['dianpu_id']], ['xueyuan_id', $kouke['xueyuan_id']], ['kecheng_id', $kouke['kecheng_id']]])->first();
-    if (!$kk) {
-        $kouke['studTime'] = $newsktime . ';';
-        $kouke['studKs'] = 1;
-        Kouke::create($kouke);
-    } else {
-        if (str_contains($kk['studTime'], $newsktime)) {
-            $fhz = 1;
+    private function Eventunsubscribe($message){
+        //"Event":"unsubscribe",
+        //"EventKey":null}
+        try {
+            $item = $message->FromUserName;
+            $wxuser=Wxuser::find($item);
+            $gr = Wxgroup::find($wxuser->group_id); $gr->count +=-1; $gr->save();
+            $wxuser->delete();
+        }catch (\Exception $ex)
+        {
+            Log::error($ex);
+        }
+    }
+
+    private  function addkouke($kouke, $newsktime, $removeid = 0){
+        $fhz = 0;
+        $kk = Kouke::where([['dianpu_id', $kouke['dianpu_id']], ['xueyuan_id', $kouke['xueyuan_id']], ['kecheng_id', $kouke['kecheng_id']]])->first();
+        if (!$kk) {
+            $kouke['studTime'] = $newsktime . ';';
+            $kouke['studKs'] = 1;
+            Kouke::create($kouke);
         } else {
-            $kouke['studTime'] = $kk['studTime'] . $newsktime . ';';
-            $kouke['studKs'] = $kk['studKs'] + 1;
-            $kk->update(['studTime' => $kouke['studTime'], 'studKs' => $kouke['studKs']]);
+            if (str_contains($kk['studTime'], $newsktime)) {
+                $fhz = 1;
+            } else {
+                $kouke['studTime'] = $kk['studTime'] . $newsktime . ';';
+                $kouke['studKs'] = $kk['studKs'] + 1;
+                $kk->update(['studTime' => $kouke['studTime'], 'studKs' => $kouke['studKs']]);
+            }
         }
-    }
-    if ($removeid) {
-        $kk = Kouke::where([['dianpu_id', $kouke['dianpu_id']], ['xueyuan_id', $removeid], ['kecheng_id', $kouke['kecheng_id']]])->first();
-        if ($kk and str_contains($kk['studTime'], $newsktime)) {
-            $kouke['studTime'] = str_replace($newsktime . ';','',$kk['studTime']);
-            $kouke['studKs'] = $kk['studKs'] - 1;
-            $kk->update(['studTime' => $kouke['studTime'], 'studKs' => $kouke['studKs']]);
-        } else {
-            $fhz = $fhz + 2;
+        if ($removeid) {
+            $kk = Kouke::where([['dianpu_id', $kouke['dianpu_id']], ['xueyuan_id', $removeid], ['kecheng_id', $kouke['kecheng_id']]])->first();
+            if ($kk and str_contains($kk['studTime'], $newsktime)) {
+                $kouke['studTime'] = str_replace($newsktime . ';','',$kk['studTime']);
+                $kouke['studKs'] = $kk['studKs'] - 1;
+                $kk->update(['studTime' => $kouke['studTime'], 'studKs' => $kouke['studKs']]);
+            } else {
+                $fhz = $fhz + 2;
+            }
         }
+
+        return $fhz;
     }
 
-    return $fhz;
-}
-
-private  function addremember($wuser, $xyname, $kcname){
-    $study = '';
-    $wstudyarr = str_getcsv($wuser->study, ';');
-    foreach ($wstudyarr as $item){
-        if ( str_contains($xyname, $item)){
-            $study = $study . "$xyname,$kcname;";
-        } else {
-            $study = $study . $item . ';';
+    private  function addremember($wuser, $xyname, $kcname){
+        $study = '';
+        $wstudyarr = str_getcsv($wuser->study, ';');
+        foreach ($wstudyarr as $item){
+            if ( str_contains($xyname, $item)){
+                $study = $study . "$xyname,$kcname;";
+            } else {
+                $study = $study . $item . ';';
+            }
         }
+        $study = substr($study, 0, strlen($study) - 1);
+        $wuser->update(['study'=>$study]);
     }
-    $study = substr($study, 0, strlen($study) - 1);
-    $wuser->update(['study'=>$study]);
-}
 }
