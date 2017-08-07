@@ -136,7 +136,7 @@ class wechatController extends Controller
                                 } else {
                                     $this->addkouke($kouke, $studytime, $xyidold);
                                     $wuser->update(['todo' => '']);
-                                    $this->addremember($wuser, Xueyuan::find($kouke['xueyuan_id'])->name, Kecheng::find($kouke['kecheng_id'])->name);
+                                    $this->addstudy($wuser, Xueyuan::find($kouke['xueyuan_id'])->name, Kecheng::find($kouke['kecheng_id'])->name);
                                     return '上课信息提醒：您的回复的已经处理。';
                                 }
                             }
@@ -187,56 +187,46 @@ class wechatController extends Controller
                 $kouke['kecheng_id'] = Kecheng::where([['dianpu_id', $kouke['dianpu_id']], ['name', $kcname]])->first()->id;
                 $xys = Xueyuan::where([['dianpu_id', $kouke['dianpu_id']], ['jiazhang_id', $jz['id']]])->get();
                 if ($xys) {
-                    if (count($xys) > 1) {
-                        $xyxx = '';
-                        $xyidarr = [];
-                        $xynamearr = [];
-                        foreach ($xys as $xy) {
+                    $xyxx = '';
+                    $xyidarr = [];
+                    $xynamearr = [];
+                    foreach ($xys as $xy) {
+                        if (!$this->Isshangke($kouke['dianpu_id'], $xy['id'], $sktime)) {
                             array_push($xyidarr, $xy['id']);
                             array_push($xynamearr, $xy['name']);
                             $xyxx = $xyxx . $xy['name'] . '学号为' . $xy['id'] . ';';
                         }
-                        $xyname = $xynamearr[0];
-                        $kouke['xueyuan_id'] = $xyidarr[0];
-                        $wstudyarr = str_getcsv($wuser->study, ';');
-                        if($wstudyarr[0]) {
-                            for ($i = 0; $i++; $i < count($wstudyarr)) {
-                                $remarr = str_getcsv($wstudyarr[$i]);
-                                if (str_contains($remarr[1], $kcname)) {
-                                    $xyidtmp = Xueyuan::where('name', $remarr[0])->first()->id;
-                                    if (!$this->Isshangke($kouke['dianpu_id'], $kouke['xueyuan_id'], $sktime)) {
+                    }
+                    if (empty($xyidarr) ) {
+                        return "错误信息：你的小朋友都在上课。";
+                    } else {
+                        if (count($xyidarr) > 1) {
+                            $xyname = $xynamearr[0];
+                            $kouke['xueyuan_id'] = $xyidarr[0];
+                            $wstudyarr = str_getcsv($wuser->study, ';');
+                            if ($wstudyarr[0]) {
+                                for ($i = 0; $i++; $i < count($wstudyarr)) {
+                                    $remarr = str_getcsv($wstudyarr[$i]);
+                                    if (str_contains($remarr[1], $kcname)) {
+                                        $xyidtmp = Xueyuan::where('name', $remarr[0])->first()->id;
                                         $xyname = $remarr[0];
                                         $kouke['xueyuan_id'] = $xyidtmp;
                                         break;
                                     }
                                 }
                             }
-                        }
-                        $fhz1 = $this->addkouke($kouke, $sktime);
-                        if ($fhz1) {    //第一学员已有本次上课信息
-                            for ($i = 0; $i++; $i < count($xyidarr)) {
-                                if (!$this->Isshangke($kouke['dianpu_id'], $xyidarr[$i], $sktime)) {
-                                    $xyname = $xynamearr[$i];
-                                    $kouke['xueyuan_id'] = $xyidarr[$i];
-                                }
-                            }
-                            $fhz2 = $this->addkouke($kouke, $sktime);
-                            $this->addremember($wuser, $xyname, $kcname);
-                            $wuser->update(['todo'=>'']);
-                            if ($fhz2) { return "上课信息：同一家长同一时段同一课程系统最多允许两个小朋友上课，请你不要重复扫码。"; }
+                            $this->addkouke($kouke, $sktime);
+                            $this->addstudy($wuser, $xyname, $kcname);
+                            $wuser->update(['todo' => implode(',', $xyidarr) . ";" . $kouke['xueyuan_id'] . ";$sktime;" . $kouke['dianpu_id'] . ";" . $kouke['kecheng_id']]);
+                            return "上课信息：小孩为" . $xyname . "，课程为" . $kcname . "，时间为" . $sktime . "。请注意，" . $xyxx . "如果上课小孩不对，请回复：GGXY+学号。";
+                        } else {  //只有一个小朋友空闲
+                            $xyname = $xynamearr[0];
+                            $kouke['xueyuan_id'] = $xyidarr[0];
+                            $this->addkouke($kouke, $sktime);
+                            $this->addstudy($wuser, $xyname, $kcname);
+                            $wuser->update(['todo' => '']);
                             return "上课信息：小孩为" . $xyname . "，课程为" . $kcname . "，时间为" . $sktime . "。";
-                        } else {
-                            $this->addremember($wuser, $xyname, $kcname);
-                            $todonr = implode(',',$xyidarr) . ";" . $kouke['xueyuan_id'] . ";$sktime;" . $kouke['dianpu_id'] . ";" . $kouke['kecheng_id'];
-                            $wuser->update(['todo'=>$todonr]);
                         }
-                        return "上课信息：小孩为" . $xyname . "，课程为" . $kcname . "，时间为" . $sktime . "。请注意，" . $xyxx . "如果上课小孩不对，请回复：GGXY+学号。";
-                    } else {  //只有一个小朋友
-                        $xyname = $xys->first()->name;
-                        $kouke['xueyuan_id'] = $xys->first()->id;
-                        $fhz3 = $this->addkouke($kouke, $sktime);
-                        if ($fhz3) { return "上课信息：系统只登记了一个小朋友资料，请你不要重复扫码。"; }
-                        return "上课信息：小孩为" . $xyname . "，课程为" . $kcname . "，时间为" . $sktime . "。";
                     }
                 } else {
                     return "上课信息：没有找到小孩信息，请与工作人员联系。";
@@ -318,19 +308,26 @@ class wechatController extends Controller
         return $fhz;
     }
 
-    private  function addremember($wuser, $xyname, $kcname){
-        $study = '';
+    private  function addstudy($wuser, $xyname, $kcname){
         $wstudy = $wuser->study;
-        if (!str_contains($wstudy, $xyname)){ $wstudy = $wstudy . "$xyname,$kcname;"; }
-        $wstudyarr = str_getcsv($wstudy, ';');
-        foreach ($wstudyarr as $item){
-            if ( str_contains($item, $xyname)){
-                $study = $study . "$xyname,$kcname;";
+        if (!str_contains($wstudy, $xyname)){
+            if(empty($wstudy)){
+                $study = "$xyname,$kcname";
             } else {
-                $study = $study . $item . ';';
+                $study = $wstudy . ";$xyname,$kcname";
             }
+        } else {
+            $study = '';
+            $wstudyarr = str_getcsv($wstudy, ';');
+            foreach ($wstudyarr as $item){
+                if ( str_contains($item, $xyname)){
+                    $study = $study . "$xyname,$kcname;";
+                } else {
+                    $study = $study . $item . ';';
+                }
+            }
+            $study = substr($study, 0, strlen($study) - 1);
         }
-        $study = substr($study, 0, strlen($study) - 1);
         $wuser->update(['study'=>$study]);
     }
 }
