@@ -5,7 +5,7 @@
 
     <div class="panel panel-success">
         <div class="panel-heading">
-            快捷方式：@can("create", new \App\Model\Role){!! link_to("wechatapiuser/create","增加微信用户") !!} | @endcan {!! link_to("wechatapiuser/$task->openid","微信用户详情") !!} ||  @include("layouts.wx.wx04")
+            快捷方式：{!! link_to("wechatapiuser/$task->openid","微信用户详情") !!} ||  @include("layouts.wx.wx04")
         </div>
         <div class="panel-body">
             <div class="panel panel-primary">
