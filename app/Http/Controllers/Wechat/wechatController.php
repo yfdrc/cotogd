@@ -119,24 +119,26 @@ class wechatController extends Controller
                 if (is_numeric($xyidgg)){
                     $wuser = Wxuser::find($from);
                     $todo = str_getcsv($wuser->todo,';');
-                    if(count($todo)<3){
+                    if(count($todo) < 5){
                         return '错误提醒：系统没有查找到你需要更改上课学号。';
                     }else{
-                        $xyidold = $todo[0];
-                        $studytime = $todo[1];
-                        $allxy = str_getcsv($todo[2]);
+                        $allxy = str_getcsv($todo[0]);
+                        $xyidold = $todo[1];
+                        $studytime = $todo[2];
                         if(str_contains($xyidgg,$allxy)){
                             if($xyidgg==$xyidold){
                                 return '错误提醒：您回复的学号为默认值。';
                             } else {
-
+                                $kouke['dianpu_id'] = $todo[3];
+                                $kouke['kecheng_id'] = $todo[4];
+                                $kouke['xueyuan_id'] = $xyidgg;
+                                $this->addkouke($kouke, $studytime, $xyidold);
+                                $wuser->update(['todo'=>'']);
                             }
                         } else {
                             return '错误提醒：您回复的学号不正确。';
                         }
                     }
-//                    $jz = Jiazhang::where('tele', Wxuser::find($from)->remark)->first();
-//                    return $xyidgg;
                 } else {
                     return '错误提醒：您回复的学号必须为数字。';
                 }
@@ -177,112 +179,133 @@ class wechatController extends Controller
                             array_push($xynamearr, $xy['name']);
                             $xyxx = $xyxx . $xy['name'] . '学号为' . $xy['id'] . ';';
                         }
-                        $xyname = $xynamearr[0];
-                        $kouke['xueyuan_id'] = $xyidarr[0];
-                        $kk = Kouke::where([['dianpu_id', $kouke['dianpu_id']], ['xueyuan_id', $kouke['xueyuan_id']], ['kecheng_id', $kouke['kecheng_id']]])->first();
-                        if (!$kk) {
-                            //没有第一学员首次扣课记录
-                            $kouke['studTime'] = $sktime . ';';
-                            $kouke['studKs'] = 1;
-                            Kouke::create($kouke);
-                        } else {
-                            //已有第一学员首次扣课记录
-                            if (str_contains($kk['studTime'], $sktime)) {
-                                //已有第一学员本次扣课信息
+                        $wstudyarr = str_getcsv($wuser->study, ';');
+                        foreach ($wstudyarr as $wstudy) {
+                            if (str_contains($kcname, $wstudy)) {
+
+                            }
+                            else {
+                                $xyname = $xynamearr[0];
+                                $kouke['xueyuan_id'] = $xyidarr[0];
+                            }
+                        }
+                        $fhz1 = $this->addkouke($kouke, $sktime);
+                        addremember($wuser, $xyname, $kcname);
+                        if ($fhz1) {    //第一学员已有本次上课信息
+                            if($xyname == $xynamearr[1]) {
+                                $xyname = $xynamearr[0];
+                                $kouke['xueyuan_id'] = $xyidarr[0];
+                            } else {
                                 $xyname = $xynamearr[1];
                                 $kouke['xueyuan_id'] = $xyidarr[1];
-                                $kk2 = Kouke::where([['dianpu_id', $kouke['dianpu_id']], ['xueyuan_id', $kouke['xueyuan_id']], ['kecheng_id', $kouke['kecheng_id']]])->first();
-                                if (!$kk2) {
-                                    //没有第二小孩首次扣课信息
-                                    $kouke['studTime'] = $sktime . ';';
-                                    $kouke['studKs'] = 1;
-                                    Kouke::create($kouke);
-                                } else {
-                                    //已有第二小孩首次扣课信息
-                                    if (str_contains($kk2['studTime'], $sktime)) {
-                                        return "上课信息：同一家长同一时段同一课程系统最多允许两个小朋友上课，请你不要重复扫码。";
-                                    } else {
-                                        //没有第二学员本次扣课信息
-                                        $kouke['studTime'] = $kk2['studTime'] . $sktime . ';';
-                                        $kouke['studKs'] = $kk2['studKs'] + 1;
-                                        $kk2->update(['studTime' => $kouke['studTime'], 'studKs' => $kouke['studKs']]);
-                                    }
-                                }
-                                return "上课信息：小孩为" . $xyname . "，课程为" . $kcname . "，时间为" . $sktime . "。";
-                            } else {
-                                //没有第一学员本次扣课信息
-                                $kouke['studTime'] = $kk['studTime'] . $sktime . ';';
-                                $kouke['studKs'] = $kk['studKs'] + 1;
-                                $kk->update(['studTime' => $kouke['studTime'], 'studKs' => $kouke['studKs']]);
                             }
+                            $fhz2 = $this->addkouke($kouke, $sktime);
+                            addremember($wuser, $xyname, $kcname);
+                            if ($fhz2) { return "上课信息：同一家长同一时段同一课程系统最多允许两个小朋友上课，请你不要重复扫码。"; }
+                            return "上课信息：小孩为" . $xyname . "，课程为" . $kcname . "，时间为" . $sktime . "。";
+                        } else {
+                            $todonr = implode(',',$xyidarr) . ";" . $kouke['xueyuan_id'] . ";$sktime;" . $kouke['dianpu_id'] . ";" . $kouke['kecheng_id'];
+                            $wuser->update(['todo'=>$todonr]);
                         }
                         return "上课信息：小孩为" . $xyname . "，课程为" . $kcname . "，时间为" . $sktime . "。请注意，" . $xyxx . "如果上课小孩不对，请回复：GGXY+学号。";
-                    } else {
-                        $xyname = $xys->first()->name;
-                        $kouke['xueyuan_id'] = $xys->first()->id;
-                        $kk = Kouke::where([['dianpu_id', $kouke['dianpu_id']], ['xueyuan_id', $kouke['xueyuan_id']], ['kecheng_id', $kouke['kecheng_id']]])->first();
-                        if (!$kk) {
-                            $kouke['studTime'] = $sktime . ';';
-                            $kouke['studKs'] = 1;
-                            Kouke::create($kouke);
-                        } else {
-                            if (str_contains($kk['studTime'], $sktime)) {
-                                return "上课信息：系统只登记了一个小朋友资料，请你不要重复扫码。";
-                            } else {
-                                $kouke['studTime'] = $kk['studTime'] . $sktime . ';';
-                                $kouke['studKs'] = $kk['studKs'] + 1;
-                                $kk->update(['studTime' => $kouke['studTime'], 'studKs' => $kouke['studKs']]);
-                            }
-                        }
-                        return "上课信息：小孩为" . $xyname . "，课程为" . $kcname . "，时间为" . $sktime . "。";
-                    }
-                } else {
-                    return "上课信息：没有找到小孩信息，请与工作人员联系。";
+                    } else {  //只有一个小朋友
+                    $xyname = $xys->first()->name;
+                    $kouke['xueyuan_id'] = $xys->first()->id;
+                    $fhz3 = $this->addkouke($kouke, $sktime);
+                    if ($fhz3) { return "上课信息：系统只登记了一个小朋友资料，请你不要重复扫码。"; }
+                    return "上课信息：小孩为" . $xyname . "，课程为" . $kcname . "，时间为" . $sktime . "。";
                 }
             } else {
-                return "上课信息：没有找到家长信息，请与工作人员联系。";
+                return "上课信息：没有找到小孩信息，请与工作人员联系。";
             }
+        } else {
+            return "上课信息：没有找到家长信息，请与工作人员联系。";
+        }
         }catch (\Exception $ex)
-        {
-            Log::error($ex);
+{
+Log::error($ex);
+}
+}
+
+private function Eventsubscribe($message){
+    //"Event":"subscribe",
+    //"EventKey":null}
+    try {
+        $wechat = app('wechat');
+        $userService = $wechat->user;
+        $item = $message->FromUserName;
+        if( !Wxuser::find($item) ){
+            $user = $userService->get($item);
+            $wxuser['nickname'] = $user->nickname;
+            $wxuser['remark'] = $user->remark;
+            $wxuser['address'] = $user->province . $user->city;
+            $wxuser['group_id'] = $user->groupid;
+            $wxuser['subtime'] = $user->subscribe_time;
+            $wxuser['openid'] = $item;
+            Wxuser::create($wxuser);
+            $gr = Wxgroup::find(0); $gr->count +=1; $gr->save();
+        }
+    }catch (\Exception $ex)
+    {
+        Log::error($ex);
+    }
+}
+
+private function Eventunsubscribe($message){
+    //"Event":"unsubscribe",
+    //"EventKey":null}
+    try {
+        $item = $message->FromUserName;
+        $wxuser=Wxuser::find($item);
+        $gr = Wxgroup::find($wxuser->group_id); $gr->count +=-1; $gr->save();
+        $wxuser->delete();
+    }catch (\Exception $ex)
+    {
+        Log::error($ex);
+    }
+}
+
+private  function addkouke($kouke, $newsktime, $removeid = 0){
+    $fhz = 0;
+    $kk = Kouke::where([['dianpu_id', $kouke['dianpu_id']], ['xueyuan_id', $kouke['xueyuan_id']], ['kecheng_id', $kouke['kecheng_id']]])->first();
+    if (!$kk) {
+        $kouke['studTime'] = $newsktime . ';';
+        $kouke['studKs'] = 1;
+        Kouke::create($kouke);
+    } else {
+        if (str_contains($kk['studTime'], $newsktime)) {
+            $fhz = 1;
+        } else {
+            $kouke['studTime'] = $kk['studTime'] . $newsktime . ';';
+            $kouke['studKs'] = $kk['studKs'] + 1;
+            $kk->update(['studTime' => $kouke['studTime'], 'studKs' => $kouke['studKs']]);
+        }
+    }
+    if ($removeid) {
+        $kk = Kouke::where([['dianpu_id', $kouke['dianpu_id']], ['xueyuan_id', $removeid], ['kecheng_id', $kouke['kecheng_id']]])->first();
+        if ($kk and str_contains($kk['studTime'], $newsktime)) {
+            $kouke['studTime'] = str_replace($newsktime . ';','',$kk['studTime']);
+            $kouke['studKs'] = $kk['studKs'] - 1;
+            $kk->update(['studTime' => $kouke['studTime'], 'studKs' => $kouke['studKs']]);
+        } else {
+            $fhz = $fhz + 2;
         }
     }
 
-    private function Eventsubscribe($message){
-        //"Event":"subscribe",
-        //"EventKey":null}
-        try {
-            $wechat = app('wechat');
-            $userService = $wechat->user;
-            $item = $message->FromUserName;
-            if( !Wxuser::find($item) ){
-                $user = $userService->get($item);
-                $wxuser['nickname'] = $user->nickname;
-                $wxuser['remark'] = $user->remark;
-                $wxuser['address'] = $user->province . $user->city;
-                $wxuser['group_id'] = $user->groupid;
-                $wxuser['subtime'] = $user->subscribe_time;
-                $wxuser['openid'] = $item;
-                Wxuser::create($wxuser);
-                $gr = Wxgroup::find(0); $gr->count +=1; $gr->save();
-            }
-        }catch (\Exception $ex)
-        {
-            Log::error($ex);
-        }
-    }
+    return $fhz;
+}
 
-    private function Eventunsubscribe($message){
-        //"Event":"unsubscribe",
-        //"EventKey":null}
-        try {
-            $item = $message->FromUserName;
-            $wxuser=Wxuser::find($item);
-            $gr = Wxgroup::find($wxuser->group_id); $gr->count +=-1; $gr->save();
-            $wxuser->delete();
-        }catch (\Exception $ex)
-        {
-            Log::error($ex);
+private  function addremember($wuser, $xyname, $kcname){
+    $study = '';
+    $wstudyarr = str_getcsv($wuser->study, ';');
+    foreach ($wstudyarr as $item){
+        if ( str_contains($xyname, $item)){
+            $study = $study . "$xyname,$kcname;";
+        } else {
+            $study = $study . $item . ';';
         }
     }
+    $study = substr($study, 0, strlen($study) - 1);
+    $wuser->update(['study'=>$study]);
+}
 }
