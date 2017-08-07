@@ -22,10 +22,12 @@ class CreateWxuserlistTable extends Migration
         });
         Schema::create('wxusers', function (Blueprint $table) {
             $table->string('openid', 64);
-            $table->string('nickname', 32)->nullable();
-            $table->string('remark', 128)->nullable();
-            $table->string('address', 64)->nullable();
             $table->integer('group_id')->unsigned()->default(0);
+            $table->string('nickname', 32)->nullable();
+            $table->string('remark', 64)->nullable();
+            $table->string('address', 128)->nullable();
+            $table->string('study', 256)->nullable();
+            $table->string('todo', 128)->nullable();
             $table->integer('subtime')->default(0);
             $table->integer('scantime')->default(0);
             $table->timestamps();
