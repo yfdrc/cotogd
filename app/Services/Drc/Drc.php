@@ -358,11 +358,11 @@ class Drc implements DrcContract
         return "成功输出的Excel扣课表。";  //不会执行
     }
 
-    public function sjtjKouke()
+    public function sjtjKouke($dp=0)
     {
         $fhz = 0;
-        DB::transaction(function() use (&$fhz) {
-            $dpid = auth()->user()->dianpu_id;
+        DB::transaction(function() use (&$fhz,$dp) {
+            if($dp == 0){ $dpid = auth()->user()->dianpu_id; } else { $dpid = $dp; }
             Tjkouke::where('dianpu_id', $dpid)->forceDelete();
             $sheet = Xueyuan::where('dianpu_id', $dpid)->get(['id','jiazhang_id']);
             foreach ($sheet as $item) {

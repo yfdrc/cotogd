@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Services\Drc\Drc;
 use Illuminate\Console\Command;
 
 class RedCommands extends Command
@@ -21,16 +20,14 @@ class RedCommands extends Command
      */
     protected $description = 'Auto tong ji kouke';
 
-    private $drc;
     /**
      * Create a new command instance.
      *
      * @return void
      */
-    public function __construct(Drc $drc)
+    public function __construct()
     {
         parent::__construct();
-        $this->drc = $drc;
     }
 
     /**
@@ -41,6 +38,6 @@ class RedCommands extends Command
     public function handle()
     {
         echo "Auto tong ji kouke ...\n";
-        $this->drc->sjtjKouke();
+        app('drc')->sjtjKouke(2);
     }
 }
