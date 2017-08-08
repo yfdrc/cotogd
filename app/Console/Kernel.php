@@ -13,7 +13,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        Commands\DrcCommands::class
+        Commands\DrcCommands::class,
+        Commands\RedCommands::class,
     ];
 
     /**
@@ -24,8 +25,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+        $schedule->command('red:tongji')
+            ->daily();
+//        $schedule->call(function () {
+//            DB::table('recent_users')->delete();
+//        })->daily();
     }
 
     /**
