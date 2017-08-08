@@ -6,12 +6,12 @@ return [
      *
      * 当值为 false 时，所有的日志都不会记录
      */
-    'debug'  => true,
+    'debug'  => env('WECHAT_DEBUG',false),
 
     /*
      * 使用 Laravel 的缓存系统
      */
-    'use_laravel_cache' => true,
+    'use_laravel_cache' => env('WECHAT_CACHE',true),
 
     /*
      * 账号基本信息，请从微信公众平台/开放平台获取

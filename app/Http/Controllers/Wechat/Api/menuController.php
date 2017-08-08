@@ -45,38 +45,38 @@ class menuController extends Controller
         $menu = $wechat->menu;
         $buttons = [
             [
-                "name"       => "点击跳转",
+                "name"       => "欢迎咨询",
                 "sub_button" => [
                     [
                         "type" => "click",
-                        "name" => "自然推荐几款",
-                        "key"  => "V1002_TJ"
+                        "name" => "业务介绍",
+                        "key"  => "yewyzx_ywjs"
                     ],
                     [
-                        "type" => "view",
-                        "name" => "搜索",
-                        "url"  => "http://www.soso.com/"
+                        "type" => "click",
+                        "name" => "联系方式",
+                        "key"  => "yewyzx_lxfs"
                     ],
-                    [
-                        "type" => "view",
-                        "name" => "weui",
-                        "url"  => "http://112.74.161.57/cotogd/example"
-                    ],
+//                    [
+//                        "type" => "view",
+//                        "name" => "weui",
+//                        "url"  => "http://112.74.161.57/cotogd/example"
+//                    ],
                 ],
             ],
             [
                 "name"=> "扫一扫我",
                 "sub_button"=> [
                     [
-                        "type"=> "scancode_push",
+                        "type"=> "scancode_waitmsg",
                         "name"=> "上课扫码",
-                        "key"=> "rselfmenu_0_1",
+                        "key"=> "rselfmenu_0_0",
                         "sub_button"=> [ ]
                     ],
 //                    [
-//                        "type"=> "scancode_waitmsg",
-//                        "name"=> "扫码带提示",
-//                        "key"=> "rselfmenu_0_0",
+//                        "type"=> "scancode_push",
+//                        "name"=> "上课扫码2",
+//                        "key"=> "rselfmenu_0_1",
 //                        "sub_button"=> [ ]
 //                    ],
 //                    [
@@ -104,17 +104,17 @@ class menuController extends Controller
                 "sub_button"=> [
                     [
                         "type" => "click",
-                        "name" => "获取家长信息",
+                        "name" => "家长信息",
                         "key"  => "myinfo_jz"
                     ],
                     [
                         "type" => "click",
-                        "name" => "获取小孩信息",
+                        "name" => "小孩信息",
                         "key"  => "myinfo_xy"
                     ],
                     [
                         "type" => "click",
-                        "name" => "获取课程喜好",
+                        "name" => "课程喜好",
                         "key"  => "myinfo_study"
                     ],
                 ]

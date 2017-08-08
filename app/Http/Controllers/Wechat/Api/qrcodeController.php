@@ -43,8 +43,8 @@ class qrcodeController extends Controller
         $qrService = $wechat->qrcode;
         $result = $qrService->forever($name);
         $qr['scene_str'] = $name;
-        $qr['ticket'] = $result->ticket;
-        $qr['url'] = $qrService->url($qr['ticket']);
+        $qr['ticket'] = $qrService->url($result->ticket);
+        $qr['url'] = $result->url;
         if(!Wxqr::where('scene_str',$name)->first()) {
             Wxqr::create($qr);
         }

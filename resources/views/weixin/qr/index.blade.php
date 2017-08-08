@@ -17,7 +17,7 @@
                         <table class='table table-striped task-table'>
                             <thead>
                             <th>名称</th>
-                            <th>获取地址</th>
+                            <th>票据</th>
                             <th></th>
                             </thead>
                             <tbody>
@@ -27,7 +27,7 @@
                                         <div class='col-lg-2'>{{ $task->scene_str }}</div>
                                     </td>
                                     <td>
-                                        <div class='col-lg-4'>{{ $task->url }}</div>
+                                        <div class='col-lg-4'>{{ $task->ticket }}</div>
                                     </td>
                                     <td>
                                         <a href="wechatapiqr\{{ $task->id }}">详情</a> @can("create", new \App\Model\Role) | <a href="wechatapiqr\{{ $task->id }}\edit">编辑</a> @endcan
