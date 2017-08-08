@@ -55,10 +55,11 @@ class usergroup2Controller extends Controller
                     }
                 }
             }
+            $groupfhz = '一次性写入微信用户组成功。';
         }catch (\Exception $ex)
         {
             $groupfhz = $ex;
         }
-        return redirect(url('wechatapigroup'))->withErrors(['一次性写入微信用户组：' . $groupfhz]);
+        return view('weixin.group', ['ts' => $groupfhz]);
     }
 }

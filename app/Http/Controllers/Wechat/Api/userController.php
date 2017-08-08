@@ -51,11 +51,12 @@ class userController extends Controller
                     Wxuser::create($wxuser);
                 }
             }
+            $userlists = '一次性写入微信用户成功。';
         }catch (\Exception $ex)
         {
             $userlists = "错误：$ex";
         }
-        return view('weixin.user.create', ['ts' => '一次性写入微信用户成功。']);
+        return view('weixin.user.create', ['ts' => $userlists]);
     }
     public function store(Request $request)
     {
