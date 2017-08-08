@@ -4,6 +4,16 @@ namespace App\Contracts;
 
 interface DrcContract
 {
+    public function dbtoout();
+
+    public function dbtozb($xlsFile, $iskkb = false);
+
+    public function dbtokkb($xlsFile, $iskkb = false);
+
+    public function sjtjKouke($dpid=0);
+
+    public function dballsave();
+
     public function saveKouke();
 
     public function saveXieyi();
@@ -13,6 +23,8 @@ interface DrcContract
     public function saveJiazhang();
 
     public function saveKecheng();
+
+    public function dballadd();
 
     public function saveYonggong();
 
@@ -27,6 +39,8 @@ interface DrcContract
     public function addKecheng();
 
     public function addYonggong();
+
+    public function csvtodb($fname, $iskkb = false);
 
     public function exceltodb($xlsFile);
 

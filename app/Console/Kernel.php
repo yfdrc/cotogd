@@ -26,7 +26,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('red:tongji')
-            ->daily();
+            ->daily()->at('07:12');
 //        $schedule->call(function () {
 //            DB::table('recent_users')->delete();
 //        })->daily();

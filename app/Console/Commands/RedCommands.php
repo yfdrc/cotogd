@@ -37,7 +37,8 @@ class RedCommands extends Command
      */
     public function handle()
     {
-        echo "Auto tong ji kouke ...\n";
+        echo "Start Auto tong ji kouke ...\n";
         app('drc')->sjtjKouke(2);
+        echo "End Auto tong ji kouke ...";
     }
 }
