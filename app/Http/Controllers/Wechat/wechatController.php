@@ -267,7 +267,7 @@ class wechatController extends Controller
                             if ($wstudyarr[0]) {
                                 for ($i = 0; $i < count($wstudyarr); $i++) {
                                     $xykcarr = str_getcsv($wstudyarr[$i]);
-                                    if (str_contains(implode(',', $xynamearr),$xykcarr[0]) and str_contains($xykcarr[1], $kcname)) {
+                                    if (in_array($xykcarr[0], $xynamearr) and str_contains($xykcarr[1], $kcname)) {
                                         $kouke['xueyuan_id'] = Xueyuan::where('name', $xykcarr[0])->first()->id;
                                         $xyname = $xykcarr[0];
                                         break;

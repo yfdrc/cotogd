@@ -49,8 +49,13 @@ class menuController extends Controller
                 "sub_button" => [
                     [
                         "type" => "click",
-                        "name" => "业务介绍",
-                        "key"  => "yewyzx_ywjs"
+                        "name" => "店铺介绍",
+                        "key"  => "yewyzx_dpjs"
+                    ],
+                    [
+                        "type" => "click",
+                        "name" => "课程介绍",
+                        "key"  => "yewyzx_kcjs"
                     ],
                     [
                         "type" => "click",
