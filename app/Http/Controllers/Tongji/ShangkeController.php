@@ -20,8 +20,6 @@ class ShangkeController extends Controller {
 
     public function index(Request $request)
     {
-        $i = 0;
-        $skrs = 0;
         $models = [];
         if( Carbon::now()->minute>30 ) {
             $sksj = Carbon::now()->addHour(1)->format("Y-m-d H");
@@ -29,7 +27,9 @@ class ShangkeController extends Controller {
             $sksj = Carbon::now()->format("Y-m-d H");
         }
         $kcs = Kecheng::where('dianpu_id', auth()->user()->dianpu_id)->get();
+        $i = 0;
         foreach ($kcs as $kc) {
+            $skrs = 0;
             $models[$i]['kecheng_id'] = $kc->name;
             $kks = Kouke::where([['dianpu_id', auth()->user()->dianpu_id], ['kecheng_id', $kc->id]])->get();
             foreach ($kks as $kk){
