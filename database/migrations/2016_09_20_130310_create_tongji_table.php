@@ -42,6 +42,7 @@ class CreateTongjiTable extends Migration
             $table->string('studQk',2048)->nullable();
             $table->integer('studKs')->default(0);
             $table->integer('zeheKs')->default(0);
+            $table->integer('dsKs')->default(0);
             $table->boolean('isJz')->default(false);
             $table->timestamps();
             $table->unique(['dianpu_id','xueyuan_id','jiazhang_id']);

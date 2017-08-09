@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Xieyi extends Model
 {
-    protected $fillable = ['name','dianpu_id','jiazhang_id', 'date',  'kebao','ksZw','ksYw','jinE','isZZ','guWen1','guWen2'];
+    protected $fillable = ['name','dianpu_id','jiazhang_id', 'date',  'kebao','ksDs','ksZw','ksYw','jinE','isZZ','guWen1','guWen2'];
 
     public function dianpu()
     {

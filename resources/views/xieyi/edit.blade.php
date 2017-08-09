@@ -26,6 +26,12 @@
                                 </div>
                             </div>
                             <div class='form-group'>
+                                {{ Form::label('ksZw', '短时课时',['class'=>'col-sm-3 control-label']) }}
+                                <div class='col-sm-6'>
+                                    {{ Form::text('ksDs', null, ['class'=>'form-control']) }}
+                                </div>
+                            </div>
+                            <div class='form-group'>
                                 {{ Form::label('ksZw', '中文课时',['class'=>'col-sm-3 control-label']) }}
                                 <div class='col-sm-6'>
                                     {{ Form::text('ksZw', null, ['class'=>'form-control']) }}

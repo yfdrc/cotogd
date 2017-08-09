@@ -81,6 +81,12 @@
                         </div>
                     </div>
                     <div class='form-group'>
+                        {{ Form::label('buyZw', '买短时课',['class'=>'col-sm-3 control-label']) }}
+                        <div class='col-sm-6'>
+                            {{ Form::label('', $task->buyDs, ['class'=>'form-control']) }}
+                        </div>
+                    </div>
+                    <div class='form-group'>
                         {{ Form::label('buyZw', '买中文课',['class'=>'col-sm-3 control-label']) }}
                         <div class='col-sm-6'>
                             {{ Form::label('', $task->buyZw, ['class'=>'form-control']) }}

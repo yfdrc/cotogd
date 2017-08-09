@@ -78,7 +78,7 @@ class KoukeController extends Controller {
      */
     public function store(Request $request)
     {
-        $this->validate($request, ['xueyuan_id' => 'required','kecheng_id' => 'required', 'studTime' => 'required','studKs' => 'required', 'kcQz' => 'required' ]);
+        $this->validate($request, ['xueyuan_id' => 'required','kecheng_id' => 'required', 'studTime' => 'required','studKs' => 'required']);
         $input = $request->all();
         $input['dianpu_id'] = auth()->user()->dianpu_id;
         $input['xueyuan_id'] = drc_selectremoveidpre($request['xueyuan_id']);
@@ -126,7 +126,7 @@ class KoukeController extends Controller {
     public function update(Request $request, $id)
     {
         $model = kouke::findOrFail($id);
-        $this->validate($request, ['studTime' => 'required','studKs' => 'required', 'kcQz' => 'required' ]);
+        $this->validate($request, ['studTime' => 'required','studKs' => 'required']);
         $input = $request->all();
         $model->fill($input)->save();
         return redirect(url('kouke'));

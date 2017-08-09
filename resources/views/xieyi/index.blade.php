@@ -30,6 +30,7 @@
                             <th>家长姓名</th>
                             <th>协议编号</th>
                             <th>课包名称</th>
+                            <th>短时课时</th>
                             <th>中文课时</th>
                             <th>英文课时</th>
                             <th>协议金额</th>
@@ -47,6 +48,9 @@
                                     </td>
                                     <td class='table-text'>
                                         <div>{{ $task->kebao }}</div>
+                                    </td>
+                                    <td class='table-text'>
+                                        <div>{{ $task->ksDs }}</div>
                                     </td>
                                     <td class='table-text'>
                                         <div>{{ $task->ksZw }}</div>

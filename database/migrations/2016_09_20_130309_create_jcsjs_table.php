@@ -52,12 +52,14 @@ class CreateJcsjsTable extends Migration
             $table->string('howGet', 64)->nullable();
             $table->string('region', 64)->nullable();
             $table->string('whenStud', 1024)->nullable();
+            $table->integer('buyDs')->default(0);
             $table->integer('buyZw')->default(0);
             $table->integer('buyYw')->default(0);
             $table->float('buyMoney')->default(0);
             $table->integer('studKssj')->default(0);
             $table->integer('studKszh')->default(0);
             $table->integer('leftKeshi')->default(0);
+            $table->integer('leftKsds')->default(0);
             $table->timestamps();
             $table->unique(['dianpu_id','bh']);
             $table->unique(['dianpu_id','name']);
@@ -87,6 +89,7 @@ class CreateJcsjsTable extends Migration
             $table->string('name', 64);
             $table->date('date')->nullable();
             $table->string('kebao', 64)->nullable();
+            $table->integer('ksDs')->default(0);
             $table->integer('ksZw')->default(0);
             $table->integer('ksYw')->default(0);
             $table->float('jinE')->default(0);
