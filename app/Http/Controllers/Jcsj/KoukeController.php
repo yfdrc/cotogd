@@ -45,7 +45,7 @@ class KoukeController extends Controller {
                 'xueyuans.bh as xybh',
                 'kechengs.name as kcname'
             )
-            ->orderBy('id', 'desc')
+            ->orderBy('updated_at', 'desc')
             ->where([['koukes.dianpu_id', auth()->user()->dianpu_id],['jiazhangs.name', 'like', $cxtj]])
             ->orwhere([['koukes.dianpu_id', auth()->user()->dianpu_id],['xueyuans.name', 'like', $cxtj]])
             ->orwhere([['koukes.dianpu_id', auth()->user()->dianpu_id],['xueyuans.bh', 'like', $cxtj]])
