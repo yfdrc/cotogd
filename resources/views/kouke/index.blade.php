@@ -32,7 +32,7 @@
                             <th>学员姓名</th>
                             <th>课程名称</th>
                             <th>上课时数</th>
-                            <th>课程权重</th>
+                            {{--<th>课程权重</th>--}}
                             <th></th>
                             </thead>
                             <tbody>
@@ -53,9 +53,9 @@
                                     <td class='table-text'>
                                         <div>{{ $task->studKs }}</div>
                                     </td>
-                                    <td class='table-text'>
-                                        <div>{{ $task->kcQz }}</div>
-                                    </td>
+                                    {{--<td class='table-text'>--}}
+                                        {{--<div>{{ $task->kcQz }}</div>--}}
+                                    {{--</td>--}}
                                     <td>
                                         <a href="kouke\{{ $task->id }}">详情</a> @can("update", new \App\Model\Role) | <a href="kouke\{{ $task->id }}\edit">编辑</a> @endcan @can("delete", new \App\Model\Role) | <a href="kouke\{{ $task->id }}">删除</a>@endcan
                                     </td>

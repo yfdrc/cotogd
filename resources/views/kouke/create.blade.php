@@ -26,6 +26,12 @@
                                 </div>
                             </div>
                             <div class='form-group'>
+                                {{ Form::label('studTime', '课程名称',['class'=>'col-sm-3 control-label']) }}
+                                <div class='col-sm-6'>
+                                    {{ Form::select('kecheng_id', $kc, null, ['class'=>'form-control']) }}
+                                </div>
+                            </div>
+                            <div class='form-group'>
                                 {{ Form::label('studTime', '上课日期',['class'=>'col-sm-3 control-label']) }}
                                 <div class='col-sm-6'>
                                     {{ Form::textarea('studTime', null, ['class'=>'form-control']) }}
@@ -37,12 +43,12 @@
                                     {{ Form::text('studKs', null, ['class'=>'form-control']) }}
                                 </div>
                             </div>
-                            <div class='form-group'>
-                                {{ Form::label('kcQz', '课程权重',['class'=>'col-sm-3 control-label']) }}
-                                <div class='col-sm-6'>
-                                    {{ Form::text('kcQz', null, ['class'=>'form-control']) }}
-                                </div>
-                            </div>
+                            {{--<div class='form-group'>--}}
+                                {{--{{ Form::label('kcQz', '课程权重',['class'=>'col-sm-3 control-label']) }}--}}
+                                {{--<div class='col-sm-6'>--}}
+                                    {{--{{ Form::text('kcQz', null, ['class'=>'form-control']) }}--}}
+                                {{--</div>--}}
+                            {{--</div>--}}
                         </div>
                     </div>
                     <div class='form-group'>

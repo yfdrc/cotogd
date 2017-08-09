@@ -30,6 +30,7 @@
                             <th>家长编号</th>
                             <th>家长姓名</th>
                             <th>家长手机</th>
+                            <th>已学课时</th>
                             <th>剩余课时</th>
                             <th>排课时间</th>
                             <th></th>
@@ -45,6 +46,9 @@
                                     </td>
                                     <td class='table-text'>
                                         <div>{{ $task->tele }}</div>
+                                    </td>
+                                    <td class='table-text'>
+                                        <div>{{ $task->studKssj }}</div>
                                     </td>
                                     <td class='table-text'>
                                         <div>{{ $task->leftKeshi }}</div>

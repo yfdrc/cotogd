@@ -27,6 +27,77 @@ use Illuminate\Support\Facades\Storage;
 
 class Drc implements DrcContract
 {
+
+    public function gxall($dpid=0)
+    {
+        $fhz = 0;
+        DB::transaction(function() use (&$fhz,$dpid) {
+            if($dpid == 0){ $dpid = auth()->user()->dianpu_id; }
+            $sheet = Xieyi::where('dianpu_id', $dpid)->get();
+
+
+
+
+
+            Tjkouke::where('dianpu_id', $dpid)->forceDelete();
+            $sheet = Xueyuan::where('dianpu_id', $dpid)->get(['id','jiazhang_id']);
+            foreach ($sheet as $item) {
+                $nrskqk = '';
+                $sjks = 0;
+                $zhks = 0;
+                $kks = Kouke::where([['dianpu_id', $dpid], ['xueyuan_id', $item['id']]])->get();
+                foreach ($kks as $kk) {
+                    $kc = Kecheng::find($kk['kecheng_id']);
+                    $nrskqk = ';' . $kc->name . '：' . $kk['studKs'] . $nrskqk;
+                    $zhks = $zhks + $kc->quanZhong * $kk['studKs'];
+                    $sjks = $sjks + $kk['studKs'];
+                }
+                if ($zhks > 0) {
+                    $nrskqk = substr($nrskqk, 1);
+                    $row = [];
+                    $row['dianpu_id'] = $dpid;
+                    $row['jiazhang_id'] = $item['jiazhang_id'];
+                    $row['xueyuan_id'] = $item['id'];
+                    $row['studQk'] = $nrskqk;
+                    $row['studKs'] = $sjks;
+                    $row['zeheKs'] = $zhks;
+                    $row['isJz'] = false;
+                    $model = Tjkouke::where([['dianpu_id', $dpid], ['xueyuan_id', $item['id']]])->first();
+                    if ($model == null and $row['studKs']>0) {
+                        DB::table("tjkoukes")->insert($row);
+                        $fhz++;
+                    }
+                    DB::table("xueyuans")->update(['studKssj'=>$sjks, 'studKszh' => $zhks]);
+                }
+            }
+            unset($sheet);
+            $sheet = Jiazhang::where('dianpu_id', $dpid)->get(['id']);
+            foreach ($sheet as $item) {
+                $row = [];
+                $row['dianpu_id'] = $dpid;
+                $row['jiazhang_id'] = $item['id'];
+                $row['isJz'] = true;
+                $row['xhqk'] = '';
+                $row['studQk'] = '';
+                $row['studKs'] = 0;
+                $row['zeheKs'] = 0;
+                $tjkks = Tjkouke::where([['dianpu_id', $dpid], ['isJz', false], ['jiazhang_id', $item['id']]])->get();
+                foreach ($tjkks as $tjkk) {
+                    $row['xhqk'] = $row['xhqk'] . Xueyuan::find($tjkk['xueyuan_id'])->name . ';';
+                    $row['studQk'] = $row['studQk'] . $tjkk['studQk'] . ';';
+                    $row['studKs'] = $row['studKs'] + $tjkk['studKs'];
+                    $row['zeheKs'] = $row['zeheKs'] + $tjkk['zeheKs'];
+                }
+                if ($row['studKs'] > 0) {
+                    DB::table("tjkoukes")->insert($row);
+                    DB::table("xueyuans")->update(['studKssj'=>$row['studKs'], 'studKszh' => $row['zeheKs']]);
+                }
+            }
+        });
+
+        return "成功增加全部统计扣课信息数：" . $fhz;
+    }
+
     public function dbtoout()
     {
         ini_set('max_execution_time', '1200');
@@ -390,6 +461,7 @@ class Drc implements DrcContract
                     if ($model == null and $row['studKs']>0) {
                         DB::table("tjkoukes")->insert($row);
                         $fhz++;
+                        DB::table("xueyuans")->update(['studKssj'=>$sjks, 'studKszh' => $zhks]);
                     }
                 }
             }
@@ -413,6 +485,7 @@ class Drc implements DrcContract
                 }
                 if ($row['studKs'] > 0) {
                     DB::table("tjkoukes")->insert($row);
+                    DB::table("jiazhangs")->update(['studKssj'=>$row['studKs'], 'studKszh' => $row['zeheKs']]);
                 }
             }
         });

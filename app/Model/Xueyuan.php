@@ -11,6 +11,11 @@ class Xueyuan extends Model
 //    protected $keyType = 'string';
     protected $guarded =[];
 
+    public function dianpu()
+    {
+        return $this->belongsTo(Dianpu::class);
+    }
+
     public function jiazhang()
     {
         return $this->belongsTo(Jiazhang::class);

@@ -11,6 +11,11 @@ class Jiazhang extends Model
 //    protected $keyType = 'string';
     protected $guarded =[];
 
+    public function dianpu()
+    {
+        return $this->belongsTo(Dianpu::class);
+    }
+
     public function xueyuans()
     {
         return $this->hasMany(Xueyuan::class);

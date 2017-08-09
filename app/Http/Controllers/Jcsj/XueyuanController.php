@@ -77,7 +77,7 @@ class XueyuanController extends Controller {
         $input['jiazhang_id'] = drc_selectremoveidpre($request['jiazhang_id']);
         $input['studKssj'] = 0;
         $input['studKszh'] = 0;
-        jiazhang::create($input);
+        Xueyuan::create($input);
         return redirect(url('xueyuan'));
     }
 
@@ -117,7 +117,7 @@ class XueyuanController extends Controller {
      */
     public function update(Request $request, $id)
     {
-        if($request['sexboy'] == 'on') { $request['sexboy'] = 1; }else{ $request['sexboy'] = 0; }
+//        if($request['sexboy'] == 'on') { $request['sexboy'] = 1; }else{ $request['sexboy'] = 0; }
         $model = xueyuan::findOrFail($id);
         $this->validate($request, ['bh' => 'required', 'name' => 'required']);
         $input = $request->all();

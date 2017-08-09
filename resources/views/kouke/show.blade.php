@@ -50,12 +50,12 @@
                             {{ $task->studKs }}
                         </div>
                     </div>
-                    <div class='form-group'>
-                        {{ Form::label('kcQz', '课程权重',['class'=>'col-sm-3 control-label']) }}
-                        <div class='col-sm-6'>
-                            {{ $task->kcQz }}
-                        </div>
-                    </div>
+                    {{--<div class='form-group'>--}}
+                        {{--{{ Form::label('kcQz', '课程权重',['class'=>'col-sm-3 control-label']) }}--}}
+                        {{--<div class='col-sm-6'>--}}
+                            {{--{{ $task->kcQz }}--}}
+                        {{--</div>--}}
+                    {{--</div>--}}
                     @can("delete", new App\Model\Role)
                         <div class='form-group'>
                             <div class='col-sm-offset-3 col-sm-6'>
