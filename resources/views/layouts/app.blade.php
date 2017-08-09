@@ -15,14 +15,6 @@
 <body>
 <div class="container">
     <div class="navbar navbar-inverse">
-        {{--<div class="navbar-header">--}}
-        {{--<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">--}}
-        {{--<span class="icon-bar"></span>--}}
-        {{--<span class="icon-bar"></span>--}}
-        {{--<span class="icon-bar"></span>--}}
-        {{--</button>--}}
-        {{--{!! link_to("/", "主页", ["class" => "navbar-brand"]) !!}--}}
-        {{--</div>--}}
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li class="dropdown">
@@ -31,29 +23,6 @@
                         <li>{!! link_to("/","主页") !!}</li>
                         <li>{!! link_to("contact","联系我们") !!}</li>
                         <li>{!! link_to("about","关于系统") !!}</li>
-                    </ul>
-                </li>
-                {{--<li class="dropdown">--}}
-                {{--<a href="javascript:void(0)" clascs="dropdown-toggle" data-toggle="dropdown">统计信息<b class="caret"></b></a>--}}
-                {{--<ul class="dropdown-menu">--}}
-                {{--<li>{!! link_to("dianpu","总体情况") !!}</li>--}}
-                {{--<li>{!! link_to("dianpu","收支情况") !!}</li>--}}
-                {{--<li>{!! link_to("dianpu","签单情况") !!}</li>--}}
-                {{--<li class="divider" />--}}
-                {{--<li>{!! link_to("dianpu","学员情况") !!}</li>--}}
-                {{--<li>{!! link_to("dianpu","店铺管理") !!}</li>--}}
-                {{--</ul>--}}
-                {{--</li>--}}
-                <li class="dropdown">
-                    <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">微信管理<b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                        <li>{!! link_to("wechatapigroup","微信用户组") !!}</li>
-                        <li>{!! link_to("wechatapiuser","微信用户") !!}</li>
-                        <li>{!! link_to("wechatapiqr","微信二维码") !!}</li>
-                        {{--<li>{!! link_to("wechatshow?fname=wx01&bt=自定义菜单","自定义菜单") !!}</li>--}}
-                        {{--<li>{!! link_to("wechatshow?fname=wx02&bt=群发内容","群发内容") !!}</li>--}}
-                        {{--<li>{!! link_to("wechatshow?fname=wx03&bt=发送模版","发送模版") !!}</li>--}}
-                        {{--<li>{!! link_to("wechatshow?fname=wx06&bt=用户标签管理","用户标签管理") !!}</li>--}}
                     </ul>
                 </li>
                 <li class="dropdown">
@@ -81,9 +50,22 @@
                     </ul>
                 </li>
                 <li class="dropdown">
-                    <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">资料统计<b class="caret"></b></a>
+                    <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">微信管理<b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                        <li>{!! link_to("tjmake","扣课情况") !!}</li>
+                        <li>{!! link_to("wechatapigroup","微信用户组") !!}</li>
+                        <li>{!! link_to("wechatapiuser","微信用户") !!}</li>
+                        <li>{!! link_to("wechatapiqr","微信二维码") !!}</li>
+                        {{--<li>{!! link_to("wechatshow?fname=wx01&bt=自定义菜单","自定义菜单") !!}</li>--}}
+                        {{--<li>{!! link_to("wechatshow?fname=wx02&bt=群发内容","群发内容") !!}</li>--}}
+                        {{--<li>{!! link_to("wechatshow?fname=wx03&bt=发送模版","发送模版") !!}</li>--}}
+                        {{--<li>{!! link_to("wechatshow?fname=wx06&bt=用户标签管理","用户标签管理") !!}</li>--}}
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">信息统计<b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li>{!! link_to("tjshangke","上课情况") !!}</li>
+                        <li>{!! link_to("tjmake","统计资料") !!}</li>
                     </ul>
                 </li>
                 <li class="dropdown">

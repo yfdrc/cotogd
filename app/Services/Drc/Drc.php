@@ -358,7 +358,7 @@ class Drc implements DrcContract
         return "成功输出的Excel扣课表。";  //不会执行
     }
 
-    public function sjtjKouke($dpid=0)
+    public function gxtjall($dpid=0)
     {
         $fhz = 0;
         DB::transaction(function() use (&$fhz,$dpid) {

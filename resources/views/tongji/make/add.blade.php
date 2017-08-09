@@ -9,7 +9,7 @@
         <div class="panel-body">
             <div class="panel panel-success">
                 <div class="panel-heading">
-                    统计资料 - 扣课情况
+                    统计资料
                 </div>
                 <div class="panel-body">
                     <table class="table center-block">
@@ -17,7 +17,7 @@
                             <td>
                                 {!! Form::open(["url"=>"tjmake?type=kouke","method"=>"POST","class"=>"form-horizontal"]) !!}
                                 <div class='col-sm-2'>
-                                    <button type='submit' class='btn btn-success'>生成扣课情况</button>
+                                    <button type='submit' class='btn btn-success'>更新统计资料</button>
                                 </div>
                                 {!! Form::close() !!}
                             </td>

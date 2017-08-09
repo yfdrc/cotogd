@@ -236,9 +236,9 @@ class wechatController extends Controller
             }
             $wuser->update(['scantime' => $tm]);
             if (Carbon::now()->minute < 30) {
-                $sktime = Carbon::now()->addHour(8)->format('Y/m/d H') . ":00";
+                $sktime = Carbon::now()->format('Y-m-d H') . ":00";
             } else {
-                $sktime = Carbon::now()->addHour(9)->format('Y/m/d H') . ":00";
+                $sktime = Carbon::now()->addHour(1)->format('Y-m-d H') . ":00";
             }
             $jz = Jiazhang::where('tele', $wuser->remark)->first();
             if ($jz) {

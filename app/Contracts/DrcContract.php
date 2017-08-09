@@ -10,7 +10,7 @@ interface DrcContract
 
     public function dbtokkb($xlsFile, $iskkb = false);
 
-    public function sjtjKouke($dpid=0);
+    public function gxtjall($dpid=0);
 
     public function dballsave();
 

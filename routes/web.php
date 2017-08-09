@@ -19,7 +19,8 @@ Route::group(['middleware' => 'auth'], function () {
     });
 
     Route::group(['namespace' => 'Tongji'], function () {
-        Route::resource('tjmake', 'TjmakeController');
+        Route::resource('tjmake', 'MakeController');
+        Route::resource('tjshangke', 'ShangkeController');
         Route::resource('tjkouke', 'KoukeController');
         Route::put('tjkouke', 'KoukeController@index');
     });

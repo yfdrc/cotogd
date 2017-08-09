@@ -10,7 +10,7 @@ namespace App\Http\Controllers\Tongji;
 use App\Http\Controllers\Controller;
 use Validator;
 
-class TjmakeController extends Controller {
+class MakeController extends Controller {
     public function index()
     {
         return view('tongji.make.add');
