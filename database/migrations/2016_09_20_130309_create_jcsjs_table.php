@@ -47,7 +47,8 @@ class CreateJcsjsTable extends Migration
             $table->integer('dianpu_id')->unsigned();
             $table->integer('kecheng_id')->unsigned();
             $table->string('sksj', 20)->nullable();
-            $table->string('boach', 64)->nullable();
+            $table->string('boach', 20)->nullable();
+            $table->string('skxy', 2048)->nullable();
             $table->integer('skrs')->default(0);
             $table->timestamps();
             $table->unique(['dianpu_id','kecheng_id','sksj']);

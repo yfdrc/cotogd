@@ -1,0 +1,53 @@
+@extends('layouts.app')
+
+@section('content')
+    @include('common.errors')
+
+    <div class="panel panel-success">
+        <div class="panel-heading">
+            快捷方式：@can("dianzhang", new \App\Model\Role){!! link_to("kecheng/create","增加课程") !!} | @endcan @can("dianzhang", new \App\Model\Role){!! link_to("kecheng/$task->id/edit","编辑课程") !!} || @endcan @include("layouts.shortcut12")
+        </div>
+        <div class="panel-body">
+            {!!  Form::model($task, ['url'=>"tjshangke/$task->id", "method" => "DELETE", "class" => "form-horizontal"]) !!}
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    上课情况 - 详情
+                </div>
+                <div class="panel-body">
+                    <div class='form-group'>
+                        {{ Form::label('name', '课程名称',['class'=>'col-sm-3 control-label']) }}
+                        <div class='col-sm-6'>
+                            {{ Form::label('', $task->kecheng->name, ['class'=>'form-control']) }}
+                        </div>
+                    </div>
+                    <div class='form-group'>
+                        {{ Form::label('ageMin', '上课人数下限',['class'=>'col-sm-3 control-label']) }}
+                        <div class='col-sm-6'>
+                            {{ Form::label('', $task->kecheng->skrsMin, ['class'=>'form-control']) }}
+                        </div>
+                    </div>
+                    <div class='form-group'>
+                        {{ Form::label('ageMax', '上课人数上限',['class'=>'col-sm-3 control-label']) }}
+                        <div class='col-sm-6'>
+                            {{ Form::label('', $task->kecheng->skrsMax, ['class'=>'form-control']) }}
+                        </div>
+                    </div>
+                    <div class='form-group'>
+                        {{ Form::label('quanZhong', '课程权重',['class'=>'col-sm-3 control-label']) }}
+                        <div class='col-sm-6'>
+                            {{ Form::label('', $task->skrs, ['class'=>'form-control']) }}
+                        </div>
+                    </div>
+                    <div class='form-group'>
+                        {{ Form::label('boach', '老师姓名',['class'=>'col-sm-3 control-label']) }}
+                        <div class='col-sm-6'>
+                            {{ Form::label('', $task->boach, ['class'=>'form-control']) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {!! Form::close() !!}
+        </div>
+    </div>
+
+@endsection

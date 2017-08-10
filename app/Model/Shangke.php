@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Shangke extends Model
 {
-    protected $guarded =[];
+    protected $fillable = ['dianpu_id', 'kecheng_id', 'boach', 'skrs', 'sksj'];
 
     public function dianpu()
     {

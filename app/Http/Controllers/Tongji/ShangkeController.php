@@ -23,27 +23,31 @@ class ShangkeController extends Controller {
         $kcs = Kecheng::where('dianpu_id', auth()->user()->dianpu_id)->get();
         $models = new Collection();
         foreach ($kcs as $kc) {
+            $kcarr = $kc->toArray();
+            $shangke = Shangke::where([['dianpu_id', auth()->user()->dianpu_id], ['kecheng_id', $kc->id],['sksj',$sksj]])->first();
             $skrs = 0;
-            $ske = new Shangke();
             $kks = Kouke::where([['dianpu_id', auth()->user()->dianpu_id], ['kecheng_id', $kc->id]])->get();
-            foreach ($kks as $kk){
-                if( str_contains($kk->studTime, $sksj )){ $skrs++; }
+            foreach ($kks as $kk) { if (str_contains($kk->studTime, $sksj)) { $skrs++; } }
+            if(!$shangke) {
+                $shangke = new Shangke();
+                $shangke ->fill($kcarr);
+                $shangke->kecheng_id = $kc->id;
+                $shangke->sksj = $sksj;
+                $shangke->skrs = $skrs;
+                Shangke::create($shangke->toArray());
+            } else {
+                $shangke->skrs = $skrs;
+                $shangke->update(['skrs'=> $skrs]);
             }
-
-            $ske->kecheng_id = $kc->id;
-            $ske->skrs = $skrs;
-            $models->add($ske);
+            $models->add($shangke);
         }
+
         return view('tongji.shangke.index', [ 'tasks' => $models]);
     }
 
     public function show($id)
     {
-        $cachename = 'tjjzkoukecx'; $cachevalue = 'tjjzkoukehs';
-        $cxnr = Cache::get($cachename);
-        $xshs = Cache::get($cachevalue);
-        $cxtj = '%' . $cxnr . '%';
-        $models = TjKouke::orderBy('id', 'desc')->where([['dianpu_id', auth()->user()->dianpu_id],['isJz', true],['jiazhang_id', 'like', $cxtj]])->paginate($xshs);
-        return view('tongji.kouke.create', [ 'tasks' => $models]);
+        $model = Shangke::find($id);
+        return view('tongji.shangke.show', [ 'task' => $model]);
     }
 }

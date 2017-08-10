@@ -11,7 +11,7 @@
             @if (count($tasks) > 0)
                 <div class="panel panel-info">
                     <div class="panel-heading">
-                        上课情况
+                        上课情况 - 列表
                     </div>
                     <div class="panel-body">
                         <table class='table table-striped task-table'>
@@ -20,6 +20,7 @@
                             <th>最少人数</th>
                             <th>最多人数</th>
                             <th>当前人数</th>
+                            <th></th>
                             </thead>
                             <tbody>
                             @foreach ($tasks as $task)
@@ -35,6 +36,9 @@
                                     </td>
                                     <td class='table-text'>
                                         <div>{{ $task->skrs }}</div>
+                                    </td>
+                                    <td>
+                                        <a href="tjshangke\{{ $task->id }}">详情</a>
                                     </td>
                                 </tr>
                             @endforeach
