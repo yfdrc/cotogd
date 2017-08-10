@@ -25,13 +25,13 @@
                             @foreach ($tasks as $task)
                                 <tr>
                                     <td class='table-text'>
-                                        <div>{{ $task->name }}</div>
+                                        <div>{{ $task->kecheng->name }}</div>
                                     </td>
                                     <td class='table-text'>
-                                        <div>{{ $task->skrsMin }}</div>
+                                        <div>{{ $task->kecheng->skrsMin }}</div>
                                     </td>
                                     <td class='table-text'>
-                                        <div>{{ $task->skrsMax }}</div>
+                                        <div>{{ $task->kecheng->skrsMax }}</div>
                                     </td>
                                     <td class='table-text'>
                                         <div>{{ $task->skrs }}</div>

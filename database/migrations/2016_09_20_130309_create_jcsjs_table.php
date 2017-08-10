@@ -37,11 +37,22 @@ class CreateJcsjsTable extends Migration
             $table->float('ageMax')->default(20);
             $table->integer('skrsMin')->default(3);
             $table->integer('skrsMax')->default(10);
-            $table->integer('skrs')->default(0);
             $table->float('quanZhong')->default(1);
             $table->timestamps();
             $table->unique(['dianpu_id','name']);
             $table->foreign('dianpu_id') ->references('id') ->on('dianpus')->onUpdate('cascade')->onDelete('cascade');
+        });
+        Schema::create('shangkes', function (Blueprint $table) {
+            $table->increments('id');
+            $table->integer('dianpu_id')->unsigned();
+            $table->integer('kecheng_id')->unsigned();
+            $table->string('sksj', 20)->nullable();
+            $table->string('boach', 64)->nullable();
+            $table->integer('skrs')->default(0);
+            $table->timestamps();
+            $table->unique(['dianpu_id','kecheng_id','sksj']);
+            $table->foreign('dianpu_id') ->references('id') ->on('dianpus')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('kecheng_id') ->references('id') ->on('kechengs')->onUpdate('cascade')->onDelete('cascade');
         });
         Schema::create('jiazhangs', function (Blueprint $table) {
             $table->increments('id');
@@ -132,6 +143,7 @@ class CreateJcsjsTable extends Migration
         Schema::dropifexists('xieyis');
         Schema::dropifexists('xueyuans');
         Schema::dropifexists('jiazhangs');
+        Schema::dropifexists('shangkes');
         Schema::dropifexists('kechengs');
         Schema::dropifexists('yonggongs');
     }

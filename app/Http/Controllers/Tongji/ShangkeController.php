@@ -10,6 +10,7 @@ namespace App\Http\Controllers\Tongji;
 use App\Http\Controllers\Controller;
 use App\Model\Kecheng;
 use App\Model\Kouke;
+use App\Model\Shangke;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
 use Validator;
@@ -23,17 +24,20 @@ class ShangkeController extends Controller {
         $models = new Collection();
         foreach ($kcs as $kc) {
             $skrs = 0;
+            $ske = new Shangke();
             $kks = Kouke::where([['dianpu_id', auth()->user()->dianpu_id], ['kecheng_id', $kc->id]])->get();
             foreach ($kks as $kk){
                 if( str_contains($kk->studTime, $sksj )){ $skrs++; }
             }
-            $kc->skrs = $skrs;
-            $models->add($kc);
+
+            $ske->kecheng_id = $kc->id;
+            $ske->skrs = $skrs;
+            $models->add($ske);
         }
         return view('tongji.shangke.index', [ 'tasks' => $models]);
     }
 
-    public function create()
+    public function show($id)
     {
         $cachename = 'tjjzkoukecx'; $cachevalue = 'tjjzkoukehs';
         $cxnr = Cache::get($cachename);
