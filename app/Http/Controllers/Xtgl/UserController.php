@@ -21,11 +21,11 @@ class UserController extends Controller {
      */
     public function index()
     {
-        if(auth()->user()->can('manage',new Role)) {
-            $models = user::orderBy('name', 'asc')->paginate(10);
-        }else{
-            $models = user::orderBy('name', 'asc')->where('dianpu_id',auth()->user()->dianpu_id)->paginate(10);
-        }
+//        if(auth()->user()->can('manage',new Role)) {
+//            $models = user::orderBy('name', 'asc')->paginate(10);
+//        }else{
+        $models = user::orderBy('name', 'asc')->where('dianpu_id',auth()->user()->dianpu_id)->paginate(10);
+//        }
         return view('user.index', [ 'tasks' => $models]);
     }
 
@@ -38,10 +38,11 @@ class UserController extends Controller {
     {
         $rid = auth()->user()->getRoleid();
         $roles = drc_selectidname('roles','id',$rid,'<=','label');
-        if(auth()->user()->can('manage',new Role)){
-            $dps = drc_selectidname('dianpus');
-            return view('user.create',compact('roles','dps'));
-        }elseif(auth()->user()->can('dianzhang',new Role)){
+//        if(auth()->user()->can('manage',new Role)){
+//            $dps = drc_selectidname('dianpus');
+//            return view('user.create',compact('roles','dps'));
+//        }else
+        if(auth()->user()->can('dianzhang',new Role)){
             $dps = drc_selectidname('dianpus','id',auth()->user()->dianpu_id);
             return view('user.create',compact('roles', 'dps'));
         }

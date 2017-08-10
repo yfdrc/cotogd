@@ -31,6 +31,8 @@
                             <th>课程名称</th>
                             <th>年龄下限</th>
                             <th>年龄上限</th>
+                            <th>人数下限</th>
+                            <th>人数上限</th>
                             <th>课程权重</th>
                             <th></th>
                             </thead>
@@ -48,6 +50,12 @@
                                     </td>
                                     <td class='table-text'>
                                         <div>{{ $task->ageMax }}</div>
+                                    </td>
+                                    <td class='table-text'>
+                                        <div>{{ $task->skrsMin }}</div>
+                                    </td>
+                                    <td class='table-text'>
+                                        <div>{{ $task->skrsMax }}</div>
                                     </td>
                                     <td class='table-text'>
                                         <div>{{ $task->quanZhong }}</div>

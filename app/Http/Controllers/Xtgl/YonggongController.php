@@ -28,11 +28,11 @@ class YonggongController extends Controller {
         if($request['_method']){ Cache::forever($cachename, $cxnr); Cache::forever($cachevalue, $xshs); } else{ $cxnr = Cache::get($cachename); $xshs = Cache::get($cachevalue);}
         if(is_numeric($xshs)){ if($xshs<1){$xshs = 10; }} else { $xshs = 10; }
         $cxtj = '%' . $cxnr . '%';
-        if(auth()->user()->can('manage',new Role)) {
-            $models = yonggong::orderBy('name', 'asc')->where('name', 'like', $cxtj)->paginate($xshs);
-        }else{
-            $models = yonggong::orderBy('name', 'asc')->where([['dianpu_id', auth()->user()->dianpu_id],['name', 'like', $cxtj]])->orwhere([['dianpu_id', auth()->user()->dianpu_id],['tele', 'like', $cxtj]])->paginate($xshs);
-        }
+//        if(auth()->user()->can('manage',new Role)) {
+//            $models = yonggong::orderBy('name', 'asc')->where('name', 'like', $cxtj)->paginate($xshs);
+//        }else{
+        $models = yonggong::orderBy('name', 'asc')->where([['dianpu_id', auth()->user()->dianpu_id],['name', 'like', $cxtj]])->orwhere([['dianpu_id', auth()->user()->dianpu_id],['tele', 'like', $cxtj]])->paginate($xshs);
+//        }
         return view('yonggong.index', [ 'tasks' => $models]);
     }
 
@@ -43,10 +43,11 @@ class YonggongController extends Controller {
      */
     public function create()
     {
-        if(auth()->user()->can('manage',new Role)){
-            $fhz = drc_selectidname('dianpus');
-            return view('yonggong.create')->with('dp', $fhz);
-        }elseif(auth()->user()->can('dianzhang',new Role)){
+//        if(auth()->user()->can('manage',new Role)){
+//            $fhz = drc_selectidname('dianpus');
+//            return view('yonggong.create')->with('dp', $fhz);
+//        }else
+        if(auth()->user()->can('dianzhang',new Role)){
             $fhz = drc_selectidname('dianpus','id',auth()->user()->dianpu_id);
             return view('yonggong.create')->with('dp', $fhz);
         }

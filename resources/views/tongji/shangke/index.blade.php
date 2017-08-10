@@ -17,13 +17,21 @@
                         <table class='table table-striped task-table'>
                             <thead>
                             <th>课程名称</th>
-                            <th>上课人数</th>
+                            <th>最少人数</th>
+                            <th>最多人数</th>
+                            <th>当前人数</th>
                             </thead>
                             <tbody>
                             @foreach ($tasks as $task)
                                 <tr>
                                     <td class='table-text'>
                                         <div>{{ $task->name }}</div>
+                                    </td>
+                                    <td class='table-text'>
+                                        <div>{{ $task->skrsMin }}</div>
+                                    </td>
+                                    <td class='table-text'>
+                                        <div>{{ $task->skrsMax }}</div>
                                     </td>
                                     <td class='table-text'>
                                         <div>{{ $task->skrs }}</div>

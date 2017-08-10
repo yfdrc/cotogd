@@ -39,6 +39,18 @@
                         </div>
                     </div>
                     <div class='form-group'>
+                        {{ Form::label('ageMin', '上课人数下限',['class'=>'col-sm-3 control-label']) }}
+                        <div class='col-sm-6'>
+                            {{ Form::label('', $task->skrsMin, ['class'=>'form-control']) }}
+                        </div>
+                    </div>
+                    <div class='form-group'>
+                        {{ Form::label('ageMax', '上课人数上限',['class'=>'col-sm-3 control-label']) }}
+                        <div class='col-sm-6'>
+                            {{ Form::label('', $task->skrsMax, ['class'=>'form-control']) }}
+                        </div>
+                    </div>
+                    <div class='form-group'>
                         {{ Form::label('quanZhong', '课程权重',['class'=>'col-sm-3 control-label']) }}
                         <div class='col-sm-6'>
                             {{ Form::label('', $task->quanZhong, ['class'=>'form-control']) }}

@@ -12,5 +12,4 @@ phpunit.xml
 *.csv
 *.cmd
 *.sh
-/.gitattributes
 /composer.lock

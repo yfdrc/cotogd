@@ -54,7 +54,7 @@ if (!function_exists('drc_selectremoveidpre')) {
 
 if (!function_exists('drc_getshangkeshijian')) {
     /**
-     * 用途：删除id中由函数drc_selectidname增加的前缀
+     * 用途：生成整点的上课时间
      * @param string $id
      * @return string
      */
