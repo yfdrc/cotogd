@@ -26,21 +26,23 @@ class ShangkeController extends Controller {
             $kcarr = $kc->toArray();
             $shangke = Shangke::where([['dianpu_id', auth()->user()->dianpu_id], ['kecheng_id', $kc->id],['sksj',$sksj]])->first();
             $skrs = 0;
+            $skxy = '';
             $kks = Kouke::where([['dianpu_id', auth()->user()->dianpu_id], ['kecheng_id', $kc->id]])->get();
-            foreach ($kks as $kk) { if (str_contains($kk->studTime, $sksj)) { $skrs++; } }
+            foreach ($kks as $kk) { if (str_contains($kk->studTime, $sksj)) { $skrs++; $skxy = $skxy . $kk->xueyuan->name . ';'; } }
             if(!$shangke) {
                 $shangke = new Shangke();
                 $shangke ->fill($kcarr);
                 $shangke->kecheng_id = $kc->id;
                 $shangke->sksj = $sksj;
-                $shangke->skrs = $skrs;
+                $shangke->skxy = $skxy;
                 Shangke::create($shangke->toArray());
             } else {
                 $shangke->skrs = $skrs;
+                $shangke->skxy = $skxy;
                 $shangke->update(['skrs'=> $skrs]);
             }
-            $models->add($shangke);
         }
+        $models = Shangke::where([['dianpu_id', auth()->user()->dianpu_id],['sksj',$sksj]])->get();
 
         return view('tongji.shangke.index', [ 'tasks' => $models]);
     }

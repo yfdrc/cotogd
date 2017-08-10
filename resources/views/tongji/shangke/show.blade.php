@@ -21,19 +21,19 @@
                         </div>
                     </div>
                     <div class='form-group'>
-                        {{ Form::label('ageMin', '上课人数下限',['class'=>'col-sm-3 control-label']) }}
+                        {{ Form::label('skrsMin', '人数下限',['class'=>'col-sm-3 control-label']) }}
                         <div class='col-sm-6'>
                             {{ Form::label('', $task->kecheng->skrsMin, ['class'=>'form-control']) }}
                         </div>
                     </div>
                     <div class='form-group'>
-                        {{ Form::label('ageMax', '上课人数上限',['class'=>'col-sm-3 control-label']) }}
+                        {{ Form::label('skrsMax', '人数上限',['class'=>'col-sm-3 control-label']) }}
                         <div class='col-sm-6'>
                             {{ Form::label('', $task->kecheng->skrsMax, ['class'=>'form-control']) }}
                         </div>
                     </div>
                     <div class='form-group'>
-                        {{ Form::label('quanZhong', '课程权重',['class'=>'col-sm-3 control-label']) }}
+                        {{ Form::label('skrs', '上课人数',['class'=>'col-sm-3 control-label']) }}
                         <div class='col-sm-6'>
                             {{ Form::label('', $task->skrs, ['class'=>'form-control']) }}
                         </div>
@@ -42,6 +42,12 @@
                         {{ Form::label('boach', '老师姓名',['class'=>'col-sm-3 control-label']) }}
                         <div class='col-sm-6'>
                             {{ Form::label('', $task->boach, ['class'=>'form-control']) }}
+                        </div>
+                    </div>
+                    <div class='form-group'>
+                        {{ Form::label('skxy', '上课名单',['class'=>'col-sm-3 control-label']) }}
+                        <div class='col-sm-6'>
+                            {{ Form::label('', $task->skxy, ['class'=>'form-control']) }}
                         </div>
                     </div>
                 </div>
