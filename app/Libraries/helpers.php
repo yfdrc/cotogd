@@ -65,6 +65,6 @@ if (!function_exists('drc_getshangkeshijian')) {
         } else {
             $sksj = \Carbon\Carbon::now()->format("Y-m-d H:00");
         }
+        return $sksj;
     }
-    return $sksj;
 }
