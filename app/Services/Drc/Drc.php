@@ -1975,7 +1975,11 @@ class Drc implements DrcContract
         try {
             $encode_arr = array('UTF-8', 'ASCII', 'GBK', 'GB2312', 'BIG5', 'JIS', 'eucjp-win', 'sjis-win', 'EUC-JP');
             $encoded = mb_detect_encoding($nrin, $encode_arr);
-            $fhz = iconv($encoded, 'utf-8', $nrin);
+            if($encoded=='utf-8'){
+                return $nrin;
+            } else {
+                $fhz = iconv($encoded, 'utf-8', $nrin);
+            }
         }catch (\Exception $e)
         {}
         return $fhz;

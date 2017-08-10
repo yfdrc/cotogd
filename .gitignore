@@ -9,6 +9,7 @@
 phpunit.xml
 *.log
 *.txt
+*.xls
 *.csv
 *.cmd
 *.sh

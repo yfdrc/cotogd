@@ -37,10 +37,11 @@ class KechengController extends Controller {
      */
     public function create()
     {
-        if(auth()->user()->can('manage',new Role)){
-            $fhz = drc_selectidname('dianpus');
-            return view('temp.kecheng.create')->with('dp', $fhz);
-        }elseif(auth()->user()->can('create',new Role)){
+//        if(auth()->user()->can('manage',new Role)){
+//            $fhz = drc_selectidname('dianpus');
+//            return view('temp.kecheng.create')->with('dp', $fhz);
+//        }else
+        if(auth()->user()->can('create',new Role)){
             $fhz = drc_selectidname('dianpus','id',auth()->user()->dianpu_id);
             return view('temp.kecheng.create')->with('dp', $fhz);
         }
