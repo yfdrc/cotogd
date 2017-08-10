@@ -10,33 +10,25 @@ namespace App\Http\Controllers\Tongji;
 use App\Http\Controllers\Controller;
 use App\Model\Kecheng;
 use App\Model\Kouke;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 use Validator;
 
 class ShangkeController extends Controller {
 
-    public function index(Request $request)
+    public function index()
     {
-        $models = [];
-        if( Carbon::now()->minute>30 ) {
-            $sksj = Carbon::now()->addHour(1)->format("Y-m-d H");
-        } else {
-            $sksj = Carbon::now()->format("Y-m-d H");
-        }
+        $sksj = drc_getshangkeshijian();
         $kcs = Kecheng::where('dianpu_id', auth()->user()->dianpu_id)->get();
-        $i = 0;
+        $models = new Collection();
         foreach ($kcs as $kc) {
             $skrs = 0;
-            $models[$i]['kecheng_id'] = $kc->name;
             $kks = Kouke::where([['dianpu_id', auth()->user()->dianpu_id], ['kecheng_id', $kc->id]])->get();
             foreach ($kks as $kk){
                 if( str_contains($kk->studTime, $sksj )){ $skrs++; }
             }
-            $models[$i]['skrs'] = $skrs;
-            $i++;
+            $kc->skrs = $skrs;
+            $models->add($kc);
         }
         return view('tongji.shangke.index', [ 'tasks' => $models]);
     }

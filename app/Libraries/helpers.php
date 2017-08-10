@@ -52,4 +52,19 @@ if (!function_exists('drc_selectremoveidpre')) {
     }
 }
 
-
+if (!function_exists('drc_getshangkeshijian')) {
+    /**
+     * 用途：删除id中由函数drc_selectidname增加的前缀
+     * @param string $id
+     * @return string
+     */
+    function drc_getshangkeshijian()
+    {
+        if( \Carbon\Carbon::now()->minute>30 ) {
+            $sksj = \Carbon\Carbon::now()->addHour(1)->format("Y-m-d H:00");
+        } else {
+            $sksj = \Carbon\Carbon::now()->format("Y-m-d H:00");
+        }
+    }
+    return $sksj;
+}

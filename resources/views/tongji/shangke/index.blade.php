@@ -23,10 +23,10 @@
                             @foreach ($tasks as $task)
                                 <tr>
                                     <td class='table-text'>
-                                        <div>{{ $task['kecheng_id'] }}</div>
+                                        <div>{{ $task->name }}</div>
                                     </td>
                                     <td class='table-text'>
-                                        <div>{{ $task['skrs'] }}</div>
+                                        <div>{{ $task->skrs }}</div>
                                     </td>
                                 </tr>
                             @endforeach

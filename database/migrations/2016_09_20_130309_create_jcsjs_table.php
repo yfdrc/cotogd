@@ -35,6 +35,9 @@ class CreateJcsjsTable extends Migration
             $table->string('boach', 64)->nullable();
             $table->float('ageMin')->default(1);
             $table->float('ageMax')->default(60);
+            $table->integer('skrsMin');
+            $table->integer('skrsMax');
+            $table->integer('skrs');
             $table->float('quanZhong')->default(1);
             $table->timestamps();
             $table->unique(['dianpu_id','name']);

@@ -38,19 +38,20 @@ class wechatController extends Controller
                         case 'unsubscribe':
                             return $this->Eventunsubscribe($message);
                             break;
+                        case 'SCAN':
+                            return $this->Eventscan($message, false);
+                            break;
                         case 'scancode_waitmsg':
-                            return $this->Eventscancodew($message);
+                            return $this->Eventscan($message, true);
                             break;
                         case 'CLICK':
                             return $this->Eventclick($message);
                             break;
-                        case 'SCAN':
-                            return $this->Eventscan($message);
+                        case 'scancode_push':
+                            //"EventKey":"rselfmenu_0_1",
+                            //"ScanCodeInfo":{"ScanType":"qrcode","ScanResult":"http://weixin.qq.com/r/NTrt9WfEtjrJrSOW928n"}}
+                            return '';
                             break;
-//                        case 'scancode_push':
-//                            //"EventKey":"rselfmenu_0_1",
-//                            //"ScanCodeInfo":{"ScanType":"qrcode","ScanResult":"http://weixin.qq.com/r/NTrt9WfEtjrJrSOW928n"}}
-//                            break;
 //                        case 'VIEW':
 //                            //"Event":"VIEW",
 //                            //"EventKey":"http://112.74.161.57/cotogd/example","MenuId":"424658939"}
@@ -106,6 +107,84 @@ class wechatController extends Controller
         });
 
         return $wechat->server->serve();
+    }
+
+    private function Eventscan($message, $iswaiting=false){
+        try {
+            $from = $message->FromUserName;
+            if($iswaiting) {
+                //"EventKey":"rselfmenu_0_0",
+                //"ScanCodeInfo":{"ScanType":"qrcode","ScanResult":"http://weixin.qq.com/r/NTrt9WfEtjrJrSOW928n"}}
+                $kcname = Wxqr::where('url', \GuzzleHttp\json_decode($message)->ScanCodeInfo->ScanResult)->first()->scene_str;
+            } else {
+                //"EventKey":"drc",
+                //"Ticket":"gQHo8DwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAyZ0dXbWQ4ek5lWjExMDAwMDAwN0EAAgSaQn1ZAwQAAAAA"}
+                $kcname = $message->EventKey;
+            }
+            $wuser = Wxuser::find($from);
+            $tm = time();
+            if ($tm - $wuser->scantime < 10) {
+                return "两次扫码间隔至少10秒。";
+            }
+            $wuser->update(['scantime' => $tm]);
+            $sktime = drc_getshangkeshijian();
+            $jz = Jiazhang::where('tele', $wuser->remark)->first();
+            if ($jz) {
+                $kouke['dianpu_id'] = $jz['dianpu_id'];
+                $kouke['kecheng_id'] = Kecheng::where([['dianpu_id', $kouke['dianpu_id']], ['name', $kcname]])->first()->id;
+                $xys = Xueyuan::where([['dianpu_id', $kouke['dianpu_id']], ['jiazhang_id', $jz['id']]])->get();
+                if ($xys) {
+                    $xyxx = '';
+                    $xyidarr = [];
+                    $xynamearr = [];
+                    foreach ($xys as $xy) {
+                        if (!$this->Isshangke($kouke['dianpu_id'], $xy['id'], $sktime)) {
+                            array_push($xyidarr, $xy['id']);
+                            array_push($xynamearr, $xy['name']);
+                            $xyxx = $xyxx . $xy['name'] . '学号为' . $xy['id'] . ';';
+                        }
+                    }
+                    if (empty($xyidarr) ) {
+                        return "错误信息：你的小朋友都在上课。";
+                    } else {
+                        $xyxx = substr($xyxx, 0, strlen($xyxx)-1) . '。';
+                        if (count($xyidarr) > 1) {
+                            $xyname = $xynamearr[0];
+                            $kouke['xueyuan_id'] = $xyidarr[0];
+                            $wstudyarr = str_getcsv($wuser->study, ';');
+                            if ($wstudyarr[0]) {
+                                for ($i = 0; $i < count($wstudyarr); $i++) {
+                                    $xykcarr = str_getcsv($wstudyarr[$i]);
+                                    if (in_array($xykcarr[0], $xynamearr) and str_contains($xykcarr[1], $kcname)) {
+                                        $kouke['xueyuan_id'] = Xueyuan::where('name', $xykcarr[0])->first()->id;
+                                        $xyname = $xykcarr[0];
+                                        break;
+                                    }
+                                }
+                            }
+                            $this->addkouke($kouke, $sktime);
+                            $this->addstudy($wuser, $xyname, $kcname);
+                            $wuser->update(['todo' => implode(',', $xyidarr) . ";" . $kouke['xueyuan_id'] . ";$sktime;" . $kouke['dianpu_id'] . ";" . $kouke['kecheng_id']]);
+                            return "上课信息：您还有小朋友没来上课\n上课时间：$sktime\n课程名称：$kcname\n上课小朋友：$xyname" . "\n温馨提示,$xyxx" . "如果上课小孩与实际不一致，请回复：GGXY+学号。";
+                        } else {  //只有一个小朋友空闲
+                            $xyname = $xynamearr[0];
+                            $kouke['xueyuan_id'] = $xyidarr[0];
+                            $this->addkouke($kouke, $sktime);
+                            $this->addstudy($wuser, $xyname, $kcname);
+                            $wuser->update(['todo' => '']);
+                            return "上课信息：您的小朋友都在上课\n上课时间：$sktime\n课程名称：$kcname\n上课小朋友：$xyname";
+                        }
+                    }
+                } else {
+                    return "错误信息：没有找到小孩信息，请与工作人员联系。";
+                }
+            } else {
+                return "错误信息：没有找到家长信息，请与工作人员联系。";
+            }
+        }catch (\Exception $ex)
+        {
+            Log::error($ex);
+        }
     }
 
     private function Eventclick($message){
@@ -217,158 +296,6 @@ class wechatController extends Controller
                     break;
             }
         } catch (\Exception $ex)
-        {
-            Log::error($ex);
-        }
-    }
-
-    private function Eventscan($message){
-//        "EventKey":"drc",
-//        "Ticket":"gQHo8DwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAyZ0dXbWQ4ek5lWjExMDAwMDAwN0EAAgSaQn1ZAwQAAAAA"}
-        try {
-            $from = $message->FromUserName;
-            $kcname = $message->EventKey;
-            $wuser = Wxuser::find($from);
-            $tm = time();
-            if ($tm - $wuser->scantime < 10) {
-                return "两次扫码间隔至少10秒。";
-            }
-            $wuser->update(['scantime' => $tm]);
-            if (Carbon::now()->minute < 30) {
-                $sktime = Carbon::now()->format('Y-m-d H') . ":00";
-            } else {
-                $sktime = Carbon::now()->addHour(1)->format('Y-m-d H') . ":00";
-            }
-            $jz = Jiazhang::where('tele', $wuser->remark)->first();
-            if ($jz) {
-                $kouke['dianpu_id'] = $jz['dianpu_id'];
-                $kouke['kecheng_id'] = Kecheng::where([['dianpu_id', $kouke['dianpu_id']], ['name', $kcname]])->first()->id;
-                $xys = Xueyuan::where([['dianpu_id', $kouke['dianpu_id']], ['jiazhang_id', $jz['id']]])->get();
-                if ($xys) {
-                    $xyxx = '';
-                    $xyidarr = [];
-                    $xynamearr = [];
-                    foreach ($xys as $xy) {
-                        if (!$this->Isshangke($kouke['dianpu_id'], $xy['id'], $sktime)) {
-                            array_push($xyidarr, $xy['id']);
-                            array_push($xynamearr, $xy['name']);
-                            $xyxx = $xyxx . $xy['name'] . '学号为' . $xy['id'] . ';';
-                        }
-                    }
-                    if (empty($xyidarr) ) {
-                        return "错误信息：你的小朋友都在上课。";
-                    } else {
-                        $xyxx = substr($xyxx, 0, strlen($xyxx)-1) . '。';
-                        if (count($xyidarr) > 1) {
-                            $xyname = $xynamearr[0];
-                            $kouke['xueyuan_id'] = $xyidarr[0];
-                            $wstudyarr = str_getcsv($wuser->study, ';');
-                            if ($wstudyarr[0]) {
-                                for ($i = 0; $i < count($wstudyarr); $i++) {
-                                    $xykcarr = str_getcsv($wstudyarr[$i]);
-                                    if (in_array($xykcarr[0], $xynamearr) and str_contains($xykcarr[1], $kcname)) {
-                                        $kouke['xueyuan_id'] = Xueyuan::where('name', $xykcarr[0])->first()->id;
-                                        $xyname = $xykcarr[0];
-                                        break;
-                                    }
-                                }
-                            }
-                            $this->addkouke($kouke, $sktime);
-                            $this->addstudy($wuser, $xyname, $kcname);
-                            $wuser->update(['todo' => implode(',', $xyidarr) . ";" . $kouke['xueyuan_id'] . ";$sktime;" . $kouke['dianpu_id'] . ";" . $kouke['kecheng_id']]);
-                            return "上课信息：您还有小朋友没来上课\n上课时间：$sktime\n课程名称：$kcname\n上课小朋友：$xyname" . "\n温馨提示,$xyxx" . "如果上课小孩与实际不一致，请回复：GGXY+学号。";
-                        } else {  //只有一个小朋友空闲
-                            $xyname = $xynamearr[0];
-                            $kouke['xueyuan_id'] = $xyidarr[0];
-                            $this->addkouke($kouke, $sktime);
-                            $this->addstudy($wuser, $xyname, $kcname);
-                            $wuser->update(['todo' => '']);
-                            return "上课信息：您的小朋友都在上课\n上课时间：$sktime\n课程名称：$kcname\n上课小朋友：$xyname";
-                        }
-                    }
-                } else {
-                    return "错误信息：没有找到小孩信息，请与工作人员联系。";
-                }
-            } else {
-                return "错误信息：没有找到家长信息，请与工作人员联系。";
-            }
-        }catch (\Exception $ex)
-        {
-            Log::error($ex);
-        }
-    }
-
-    private function Eventscancodew($message){
-        //"EventKey":"rselfmenu_0_0",
-        //"ScanCodeInfo":{"ScanType":"qrcode","ScanResult":"http://weixin.qq.com/r/NTrt9WfEtjrJrSOW928n"}}
-        try {
-            $from = $message->FromUserName;
-            $kcname = Wxqr::where('url', \GuzzleHttp\json_decode($message)->ScanCodeInfo->ScanResult)->first()->scene_str;
-            $wuser = Wxuser::find($from);
-            $tm = time();
-            if ($tm - $wuser->scantime < 10) {
-                return "两次扫码间隔至少10秒。";
-            }
-            $wuser->update(['scantime' => $tm]);
-            if (Carbon::now()->minute < 30) {
-                $sktime = Carbon::now()->format('Y-m-d H') . ":00";
-            } else {
-                $sktime = Carbon::now()->addHour(1)->format('Y-m-d H') . ":00";
-            }
-            $jz = Jiazhang::where('tele', $wuser->remark)->first();
-            if ($jz) {
-                $kouke['dianpu_id'] = $jz['dianpu_id'];
-                $kouke['kecheng_id'] = Kecheng::where([['dianpu_id', $kouke['dianpu_id']], ['name', $kcname]])->first()->id;
-                $xys = Xueyuan::where([['dianpu_id', $kouke['dianpu_id']], ['jiazhang_id', $jz['id']]])->get();
-                if ($xys) {
-                    $xyxx = '';
-                    $xyidarr = [];
-                    $xynamearr = [];
-                    foreach ($xys as $xy) {
-                        if (!$this->Isshangke($kouke['dianpu_id'], $xy['id'], $sktime)) {
-                            array_push($xyidarr, $xy['id']);
-                            array_push($xynamearr, $xy['name']);
-                            $xyxx = $xyxx . $xy['name'] . '学号为' . $xy['id'] . ';';
-                        }
-                    }
-                    if (empty($xyidarr) ) {
-                        return "错误信息：你的小朋友都在上课。";
-                    } else {
-                        $xyxx = substr($xyxx, 0, strlen($xyxx)-1) . '。';
-                        if (count($xyidarr) > 1) {
-                            $xyname = $xynamearr[0];
-                            $kouke['xueyuan_id'] = $xyidarr[0];
-                            $wstudyarr = str_getcsv($wuser->study, ';');
-                            if ($wstudyarr[0]) {
-                                for ($i = 0; $i < count($wstudyarr); $i++) {
-                                    $xykcarr = str_getcsv($wstudyarr[$i]);
-                                    if (in_array($xykcarr[0], $xynamearr) and str_contains($xykcarr[1], $kcname)) {
-                                        $kouke['xueyuan_id'] = Xueyuan::where('name', $xykcarr[0])->first()->id;
-                                        $xyname = $xykcarr[0];
-                                        break;
-                                    }
-                                }
-                            }
-                            $this->addkouke($kouke, $sktime);
-                            $this->addstudy($wuser, $xyname, $kcname);
-                            $wuser->update(['todo' => implode(',', $xyidarr) . ";" . $kouke['xueyuan_id'] . ";$sktime;" . $kouke['dianpu_id'] . ";" . $kouke['kecheng_id']]);
-                            return "上课信息：您还有小朋友没来上课\n上课时间：$sktime\n课程名称：$kcname\n上课小朋友：$xyname" . "\n温馨提示,$xyxx" . "如果上课小孩与实际不一致，请回复：GGXY+学号。";
-                        } else {  //只有一个小朋友空闲
-                            $xyname = $xynamearr[0];
-                            $kouke['xueyuan_id'] = $xyidarr[0];
-                            $this->addkouke($kouke, $sktime);
-                            $this->addstudy($wuser, $xyname, $kcname);
-                            $wuser->update(['todo' => '']);
-                            return "上课信息：您的小朋友都在上课\n上课时间：$sktime\n课程名称：$kcname\n上课小朋友：$xyname";
-                        }
-                    }
-                } else {
-                    return "错误信息：没有找到小孩信息，请与工作人员联系。";
-                }
-            } else {
-                return "错误信息：没有找到家长信息，请与工作人员联系。";
-            }
-        }catch (\Exception $ex)
         {
             Log::error($ex);
         }
