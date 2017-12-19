@@ -201,7 +201,7 @@ class wechatController extends Controller
                         return '温馨提醒：您的信息系统还没有登记';
                     } else {
                         $ekey = str_replace('MYINFO_', '', $ekey);
-                        switch (strtoupper($ekey)) {
+                        switch ($ekey) {
                             case 'JZ':
                                 $jzname = $jz['name'];
                                 $jztele = $jz['tele'];
@@ -233,6 +233,26 @@ class wechatController extends Controller
                                 return '错误提示：您发送了系统不认识的命令。';
                                 break;
                         }
+                    }
+                    break;
+
+                case 'YEWUZX_':
+                    $ekey = str_replace('YEWUZX_', '', $ekey);
+                    switch ($ekey){
+                        case "DPJS":
+                            return '业务咨询：店铺介绍...';
+                            break;
+
+                        case "KCJS":
+                            return '业务咨询：课程介绍...';
+                            break;
+
+                        case "LXFS":
+                            return '业务咨询：联系方式...';
+                            break;
+
+                        default:
+                            break;
                     }
                     break;
 

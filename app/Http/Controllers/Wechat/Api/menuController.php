@@ -50,17 +50,17 @@ class menuController extends Controller
                     [
                         "type" => "click",
                         "name" => "店铺介绍",
-                        "key"  => "yewyzx_dpjs"
+                        "key"  => "yewuzx_dpjs"
                     ],
                     [
                         "type" => "click",
                         "name" => "课程介绍",
-                        "key"  => "yewyzx_kcjs"
+                        "key"  => "yewuzx_kcjs"
                     ],
                     [
                         "type" => "click",
                         "name" => "联系方式",
-                        "key"  => "yewyzx_lxfs"
+                        "key"  => "yewuzx_lxfs"
                     ],
 //                    [
 //                        "type" => "view",

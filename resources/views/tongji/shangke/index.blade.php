@@ -5,7 +5,7 @@
 
     <div class="panel panel-default">
         <div class="panel-heading">
-            快捷方式：@include("layouts.shortcut32")
+            快捷方式：@can("dianzhang", new \App\Model\Role){!! link_to("tjshangke","统计上课") !!} | @endcan @can("dianzhang", new \App\Model\Role){!! link_to("tjmake","统计扣课") !!}  @endcan
         </div>
         <div class="panel-body">
             @if (count($tasks) > 0)

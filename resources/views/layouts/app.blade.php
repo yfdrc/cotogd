@@ -55,10 +55,11 @@
                         <li>{!! link_to("wechatapigroup","微信用户组") !!}</li>
                         <li>{!! link_to("wechatapiuser","微信用户") !!}</li>
                         <li>{!! link_to("wechatapiqr","微信二维码") !!}</li>
-                        {{--<li>{!! link_to("wechatshow?fname=wx01&bt=自定义菜单","自定义菜单") !!}</li>--}}
-                        {{--<li>{!! link_to("wechatshow?fname=wx02&bt=群发内容","群发内容") !!}</li>--}}
-                        {{--<li>{!! link_to("wechatshow?fname=wx03&bt=发送模版","发送模版") !!}</li>--}}
-                        {{--<li>{!! link_to("wechatshow?fname=wx06&bt=用户标签管理","用户标签管理") !!}</li>--}}
+                        <li>{!! link_to("wechatapigroup2","微信用户批量移入新组 ") !!}</li>
+                        <li>{!! link_to("wechatapimenu","微信自定义菜单") !!}</li>
+                        <li>{!! link_to("wechatapicast","微信群发内容") !!}</li>
+                        <li>{!! link_to("wechatapinotice","微信发送模版") !!}</li>
+                        <li>{!! link_to("wechatapitag","微信用户标签管理") !!}</li>
                     </ul>
                 </li>
                 <li class="dropdown">

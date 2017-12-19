@@ -5,13 +5,13 @@
 
     <div class="panel panel-success">
         <div class="panel-heading">
-            快捷方式：@can("dianzhang", new \App\Model\Role){!! link_to("kecheng/create","增加课程") !!} | @endcan @can("dianzhang", new \App\Model\Role){!! link_to("kecheng/$task->id/edit","编辑课程") !!} || @endcan @include("layouts.shortcut12")
+            快捷方式：@can("dianzhang", new \App\Model\Role){!! link_to("tjshangke","统计上课") !!} | @endcan @can("dianzhang", new \App\Model\Role){!! link_to("tjmake","统计扣课") !!}  @endcan
         </div>
         <div class="panel-body">
             {!!  Form::model($task, ['url'=>"tjshangke/$task->id", "method" => "DELETE", "class" => "form-horizontal"]) !!}
             <div class="panel panel-primary">
                 <div class="panel-heading">
-                    上课情况 - 详情
+                    统计上课 - 详情
                 </div>
                 <div class="panel-body">
                     <div class='form-group'>

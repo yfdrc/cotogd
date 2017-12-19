@@ -21,7 +21,7 @@ class MakeController extends Controller {
         $cs = request()->get("type");
         switch ($cs){
             case 'kouke':
-                return view('tongji.make.save', ['xsnr' => app('drc')->sjtjKouke(),'ts'=>'扣课']);
+                return view('tongji.make.save', ['xsnr' => app('drc')->gxtjall(),'ts'=>'扣课']);
                 break;
         }
         return view('tongji.kouke.make', ['xsnr' => "error"]);

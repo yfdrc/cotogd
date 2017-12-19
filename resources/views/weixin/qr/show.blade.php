@@ -23,7 +23,7 @@
                     <div class='form-group'>
                         {{ Form::label('ticket', '票据',['class'=>'col-sm-3 control-label']) }}
                         <div class='col-sm-6'>
-                            {{ $task->ticket }}
+                            {!! '<img src="'. $task->ticket .'"  />'  !!}
                         </div>
                     </div>
                     <div class='form-group'>
